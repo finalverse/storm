@@ -27,6 +27,9 @@ Finalverse Storm is an AI-driven, plugin-extensible, cross-platform virtual worl
 └── Libs/             # Compiled libstorm.a for macOS/iOS
 ```
 
+## 📚 Documentation
+- [Architecture Overview](docs/ARCHITECTURE.md)
+
 ## 📦 Requirements
 - macOS 13+
 - Xcode 15+
