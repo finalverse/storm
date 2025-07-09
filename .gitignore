@@ -1,0 +1,28 @@
+
+
+
+# Xcode build
+DerivedData/
+*.xcworkspace
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/xcshareddata/
+
+# SwiftPM
+.build/
+.swiftpm/
+
+# Rust
+/RustCore/target/
+/.build-rust/
+.build-rust/
+**/*.rs.bk
+
+# Binary output
+/Libs/libstorm-*.a
+
+# IDE
+.DS_Store
+.vscode/
+*.log
+*.swp

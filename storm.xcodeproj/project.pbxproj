@@ -6,23 +6,58 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE7B2E1E58FE0045436F /* ContentView.swift */; };
+		B437BE862E1E59C40045436F /* RuntimeKernel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE852E1E59C40045436F /* RuntimeKernel.swift */; };
+		B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE872E1E5DFA0045436F /* PluginHost.swift */; };
+		B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE892E1E5E500045436F /* HelloPlugin.swift */; };
+		B437BE8C2E1E5F480045436F /* SystemRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE8B2E1E5F480045436F /* SystemRegistry.swift */; };
+		B437BE8E2E1E61D20045436F /* ECSCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE8D2E1E61D20045436F /* ECSCore.swift */; };
+		B437BE902E1E6A650045436F /* PingPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE8F2E1E6A650045436F /* PingPlugin.swift */; };
+		B437BE972E1E8C1F0045436F /* libstorm-macos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B437BE942E1E8C1F0045436F /* libstorm-macos.a */; platformFilters = (macos, ); };
+		B437BE992E1E8C1F0045436F /* libstorm-ios-sim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B437BE962E1E8C1F0045436F /* libstorm-ios-sim.a */; platformFilter = ios; };
+		B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9A2E1EA7550045436F /* UIComposer.swift */; };
+		B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9C2E1EAAB20045436F /* UISchemaView.swift */; };
+		B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9E2E1EBEBA0045436F /* HUDTestPlugin.swift */; };
+		B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA02E1EC2350045436F /* UIScriptRouter.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		B437BE642E1E58AB0045436F /* storm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = storm.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B437BE772E1E58FE0045436F /* Storm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Storm.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B437BE7B2E1E58FE0045436F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B437BE852E1E59C40045436F /* RuntimeKernel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeKernel.swift; sourceTree = "<group>"; };
+		B437BE872E1E5DFA0045436F /* PluginHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginHost.swift; sourceTree = "<group>"; };
+		B437BE892E1E5E500045436F /* HelloPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelloPlugin.swift; sourceTree = "<group>"; };
+		B437BE8B2E1E5F480045436F /* SystemRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemRegistry.swift; sourceTree = "<group>"; };
+		B437BE8D2E1E61D20045436F /* ECSCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ECSCore.swift; sourceTree = "<group>"; };
+		B437BE8F2E1E6A650045436F /* PingPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPlugin.swift; sourceTree = "<group>"; };
+		B437BE922E1E77AE0045436F /* libstorm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libstorm.a; sourceTree = "<group>"; };
+		B437BE942E1E8C1F0045436F /* libstorm-macos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libstorm-macos.a"; path = "libs/libstorm-macos.a"; sourceTree = "<group>"; };
+		B437BE952E1E8C1F0045436F /* libstorm-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libstorm-ios.a"; path = "libs/libstorm-ios.a"; sourceTree = "<group>"; };
+		B437BE962E1E8C1F0045436F /* libstorm-ios-sim.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libstorm-ios-sim.a"; path = "libs/libstorm-ios-sim.a"; sourceTree = "<group>"; };
+		B437BE9A2E1EA7550045436F /* UIComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComposer.swift; sourceTree = "<group>"; };
+		B437BE9C2E1EAAB20045436F /* UISchemaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UISchemaView.swift; sourceTree = "<group>"; };
+		B437BE9E2E1EBEBA0045436F /* HUDTestPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDTestPlugin.swift; sourceTree = "<group>"; };
+		B437BEA02E1EC2350045436F /* UIScriptRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScriptRouter.swift; sourceTree = "<group>"; };
+		B437BEA62E1ED3030045436F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		B437BEA82E1ED36D0045436F /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B437BE662E1E58AB0045436F /* storm */ = {
+		B437BE782E1E58FE0045436F /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = storm;
+			path = App;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B437BE612E1E58AB0045436F /* Frameworks */ = {
+		B437BE742E1E58FE0045436F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B437BE972E1E8C1F0045436F /* libstorm-macos.a in Frameworks */,
+				B437BE992E1E8C1F0045436F /* libstorm-ios-sim.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,7 +67,14 @@
 		B437BE5B2E1E58AB0045436F = {
 			isa = PBXGroup;
 			children = (
-				B437BE662E1E58AB0045436F /* storm */,
+				B437BEA62E1ED3030045436F /* README.md */,
+				B437BEA72E1ED3410045436F /* docs */,
+				B437BE782E1E58FE0045436F /* App */,
+				B437BE832E1E592A0045436F /* Core */,
+				B437BEA22E1ED1C20045436F /* Engine */,
+				B437BEA32E1ED21C0045436F /* Plugins */,
+				B437BE842E1E59610045436F /* UI */,
+				B437BE912E1E77AE0045436F /* Frameworks */,
 				B437BE652E1E58AB0045436F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -40,34 +82,92 @@
 		B437BE652E1E58AB0045436F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B437BE642E1E58AB0045436F /* storm.app */,
+				B437BE772E1E58FE0045436F /* Storm.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B437BE832E1E592A0045436F /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				B437BE852E1E59C40045436F /* RuntimeKernel.swift */,
+				B437BE872E1E5DFA0045436F /* PluginHost.swift */,
+				B437BE8B2E1E5F480045436F /* SystemRegistry.swift */,
+				B437BEA02E1EC2350045436F /* UIScriptRouter.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		B437BE842E1E59610045436F /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				B437BE7B2E1E58FE0045436F /* ContentView.swift */,
+				B437BE9C2E1EAAB20045436F /* UISchemaView.swift */,
+				B437BE9A2E1EA7550045436F /* UIComposer.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		B437BE912E1E77AE0045436F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B437BE952E1E8C1F0045436F /* libstorm-ios.a */,
+				B437BE962E1E8C1F0045436F /* libstorm-ios-sim.a */,
+				B437BE942E1E8C1F0045436F /* libstorm-macos.a */,
+				B437BE922E1E77AE0045436F /* libstorm.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B437BEA22E1ED1C20045436F /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				B437BE8D2E1E61D20045436F /* ECSCore.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		B437BEA32E1ED21C0045436F /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				B437BE892E1E5E500045436F /* HelloPlugin.swift */,
+				B437BE8F2E1E6A650045436F /* PingPlugin.swift */,
+				B437BE9E2E1EBEBA0045436F /* HUDTestPlugin.swift */,
+			);
+			path = Plugins;
+			sourceTree = "<group>";
+		};
+		B437BEA72E1ED3410045436F /* docs */ = {
+			isa = PBXGroup;
+			children = (
+				B437BEA82E1ED36D0045436F /* ARCHITECTURE.md */,
+			);
+			path = docs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B437BE632E1E58AB0045436F /* storm */ = {
+		B437BE762E1E58FE0045436F /* Storm */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B437BE702E1E58AD0045436F /* Build configuration list for PBXNativeTarget "storm" */;
+			buildConfigurationList = B437BE802E1E59000045436F /* Build configuration list for PBXNativeTarget "Storm" */;
 			buildPhases = (
-				B437BE602E1E58AB0045436F /* Sources */,
-				B437BE612E1E58AB0045436F /* Frameworks */,
-				B437BE622E1E58AB0045436F /* Resources */,
+				B437BE732E1E58FE0045436F /* Sources */,
+				B437BE742E1E58FE0045436F /* Frameworks */,
+				B437BE752E1E58FE0045436F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B437BE662E1E58AB0045436F /* storm */,
+				B437BE782E1E58FE0045436F /* App */,
 			);
-			name = storm;
+			name = Storm;
 			packageProductDependencies = (
 			);
-			productName = storm;
-			productReference = B437BE642E1E58AB0045436F /* storm.app */;
+			productName = Storm;
+			productReference = B437BE772E1E58FE0045436F /* Storm.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -80,7 +180,7 @@
 				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
-					B437BE632E1E58AB0045436F = {
+					B437BE762E1E58FE0045436F = {
 						CreatedOnToolsVersion = 16.3;
 					};
 				};
@@ -99,13 +199,13 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B437BE632E1E58AB0045436F /* storm */,
+				B437BE762E1E58FE0045436F /* Storm */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B437BE622E1E58AB0045436F /* Resources */ = {
+		B437BE752E1E58FE0045436F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -115,10 +215,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		B437BE602E1E58AB0045436F /* Sources */ = {
+		B437BE732E1E58FE0045436F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B437BE902E1E6A650045436F /* PingPlugin.swift in Sources */,
+				B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */,
+				B437BE8C2E1E5F480045436F /* SystemRegistry.swift in Sources */,
+				B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */,
+				B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */,
+				B437BE8E2E1E61D20045436F /* ECSCore.swift in Sources */,
+				B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */,
+				B437BE862E1E59C40045436F /* RuntimeKernel.swift in Sources */,
+				B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */,
+				B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */,
+				B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,18 +352,19 @@
 			};
 			name = Release;
 		};
-		B437BE712E1E58AD0045436F /* Debug */ = {
+		B437BE812E1E59000045436F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = storm/storm.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Storm.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2F3E73M8TT;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/RustCore";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -266,9 +378,16 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(SRCROOT)/.build-rust/release",
+					"$(PROJECT_DIR)/libs",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 15.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.finalverse.storm;
+				MODULEMAP_FILE = RustCore/module.modulemap;
+				PRODUCT_BUNDLE_IDENTIFIER = com.finalverse.Storm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -280,18 +399,19 @@
 			};
 			name = Debug;
 		};
-		B437BE722E1E58AD0045436F /* Release */ = {
+		B437BE822E1E59000045436F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = storm/storm.entitlements;
+				CODE_SIGN_ENTITLEMENTS = App/Storm.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2F3E73M8TT;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/RustCore";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -305,9 +425,16 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+					"$(SRCROOT)/.build-rust/release",
+					"$(PROJECT_DIR)/libs",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 15.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.finalverse.storm;
+				MODULEMAP_FILE = RustCore/module.modulemap;
+				PRODUCT_BUNDLE_IDENTIFIER = com.finalverse.Storm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -331,11 +458,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B437BE702E1E58AD0045436F /* Build configuration list for PBXNativeTarget "storm" */ = {
+		B437BE802E1E59000045436F /* Build configuration list for PBXNativeTarget "Storm" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B437BE712E1E58AD0045436F /* Debug */,
-				B437BE722E1E58AD0045436F /* Release */,
+				B437BE812E1E59000045436F /* Debug */,
+				B437BE822E1E59000045436F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

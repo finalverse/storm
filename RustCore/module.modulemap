@@ -1,0 +1,5 @@
+module RustStorm [system] {
+    header "storm.h"
+    link "storm"
+    export *
+}
