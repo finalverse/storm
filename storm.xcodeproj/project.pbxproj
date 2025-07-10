@@ -30,6 +30,7 @@
 		B4838B6D2E2039B3007276FD /* StormLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6C2E2039B3007276FD /* StormLogger.swift */; };
 		B4838B6F2E2041BF007276FD /* SceneViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */; };
 		B4838B712E204566007276FD /* SceneRendererService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B702E204566007276FD /* SceneRendererService.swift */; };
+		B4838B732E205373007276FD /* InteractiveSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B722E205373007276FD /* InteractiveSceneView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +62,7 @@
 		B4838B6C2E2039B3007276FD /* StormLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormLogger.swift; sourceTree = "<group>"; };
 		B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewContainer.swift; sourceTree = "<group>"; };
 		B4838B702E204566007276FD /* SceneRendererService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRendererService.swift; sourceTree = "<group>"; };
+		B4838B722E205373007276FD /* InteractiveSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveSceneView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -127,6 +129,7 @@
 				B437BE9A2E1EA7550045436F /* UIComposer.swift */,
 				B4838B6A2E20340D007276FD /* ConsoleLogView.swift */,
 				B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */,
+				B4838B722E205373007276FD /* InteractiveSceneView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B4838B732E205373007276FD /* InteractiveSceneView.swift in Sources */,
 				B437BE902E1E6A650045436F /* PingPlugin.swift in Sources */,
 				B4838B6D2E2039B3007276FD /* StormLogger.swift in Sources */,
 				B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */,
