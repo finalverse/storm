@@ -31,6 +31,13 @@ final class HUDTestPlugin: StormPlugin {
               "action": "echo.sing"
             },
             {
+              "id": "btn_mood",
+              "type": "button",
+              "label": "Happy",
+              "icon": "smiley",
+              "action": "echo.setMood Happy"
+            },
+            {
               "id": "lbl_hello",
               "type": "label",
               "label": "Welcome, Echo."

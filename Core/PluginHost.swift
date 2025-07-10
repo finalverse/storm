@@ -33,6 +33,7 @@ final class PluginHost {
         register(plugin: logPlugin, into: kernel, registry: registry)
         register(plugin: PingPlugin(), into: kernel, registry: registry)
         register(plugin: HUDTestPlugin(), into: kernel, registry: registry)
+        register(plugin: EchoAgentPlugin(), into: kernel, registry: registry)
     }
 
     /// Registers plugin and links it to the kernel tick loop

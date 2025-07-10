@@ -41,10 +41,15 @@ final class StormRuntime {
         let router = UIScriptRouter()
         registry.router = router
 
+        let agentService = EchoAgentService(ecs: ecs)
+
         router.registerHandler(namespace: "echo") { command, args in
             switch command {
             case "sing":
                 print("[🧠] Echo command: sing 🎵")
+            case "setMood":
+                let mood = args.first ?? "Neutral"
+                agentService.updateAgentMood(to: mood)
             default:
                 print("[❓] Unknown echo command: \(command)")
             }

@@ -21,6 +21,8 @@
 		B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9E2E1EBEBA0045436F /* HUDTestPlugin.swift */; };
 		B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA02E1EC2350045436F /* UIScriptRouter.swift */; };
 		B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA92E1F89810045436F /* StormRuntime.swift */; };
+		B4838B612E1FA61F007276FD /* EchoAgentPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B602E1FA61F007276FD /* EchoAgentPlugin.swift */; };
+		B4838B632E1FA75A007276FD /* EchoAgentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B622E1FA75A007276FD /* EchoAgentService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +45,8 @@
 		B437BEA62E1ED3030045436F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B437BEA82E1ED36D0045436F /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
 		B437BEA92E1F89810045436F /* StormRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormRuntime.swift; sourceTree = "<group>"; };
+		B4838B602E1FA61F007276FD /* EchoAgentPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchoAgentPlugin.swift; sourceTree = "<group>"; };
+		B4838B622E1FA75A007276FD /* EchoAgentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchoAgentService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -126,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				B437BE8D2E1E61D20045436F /* ECSCore.swift */,
+				B4838B622E1FA75A007276FD /* EchoAgentService.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -136,6 +141,7 @@
 				B437BE892E1E5E500045436F /* HelloPlugin.swift */,
 				B437BE8F2E1E6A650045436F /* PingPlugin.swift */,
 				B437BE9E2E1EBEBA0045436F /* HUDTestPlugin.swift */,
+				B4838B602E1FA61F007276FD /* EchoAgentPlugin.swift */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -229,7 +235,9 @@
 				B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */,
 				B437BE8E2E1E61D20045436F /* ECSCore.swift in Sources */,
 				B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */,
+				B4838B632E1FA75A007276FD /* EchoAgentService.swift in Sources */,
 				B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */,
+				B4838B612E1FA61F007276FD /* EchoAgentPlugin.swift in Sources */,
 				B437BE862E1E59C40045436F /* Kernel.swift in Sources */,
 				B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */,
 				B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */,
