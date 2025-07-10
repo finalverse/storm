@@ -9,14 +9,18 @@
 
 import Foundation
 
-struct PingComponent: Component {
+final class PingComponent: Component {
     var countdown: TimeInterval
+
+    init(countdown: TimeInterval) {
+        self.countdown = countdown
+    }
 }
 
 final class PingSystem: ECSStepSystem {
     func update(world: ECSWorld, deltaTime: TimeInterval) {
         for (id, comp) in world.entities(with: PingComponent.self) {
-            var updated = comp
+            let updated = comp
             updated.countdown -= deltaTime
 
             if updated.countdown <= 0 {

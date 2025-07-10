@@ -15,7 +15,7 @@ struct StormApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(runtime.getUIComposer() ?? UIComposer())
+                .environmentObject(runtime.getUIComposer())
                 .onAppear {
                     runtime.start()
                 }
