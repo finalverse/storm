@@ -29,6 +29,7 @@
 		B4838B6B2E20340D007276FD /* ConsoleLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6A2E20340D007276FD /* ConsoleLogView.swift */; };
 		B4838B6D2E2039B3007276FD /* StormLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6C2E2039B3007276FD /* StormLogger.swift */; };
 		B4838B6F2E2041BF007276FD /* SceneViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */; };
+		B4838B712E204566007276FD /* SceneRendererService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B702E204566007276FD /* SceneRendererService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +60,7 @@
 		B4838B6A2E20340D007276FD /* ConsoleLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogView.swift; sourceTree = "<group>"; };
 		B4838B6C2E2039B3007276FD /* StormLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormLogger.swift; sourceTree = "<group>"; };
 		B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewContainer.swift; sourceTree = "<group>"; };
+		B4838B702E204566007276FD /* SceneRendererService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRendererService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -149,6 +151,7 @@
 				B4838B662E202241007276FD /* BindableAgentService.swift */,
 				B4838B682E2033E9007276FD /* ConsoleLogService.swift */,
 				B4838B6C2E2039B3007276FD /* StormLogger.swift */,
+				B4838B702E204566007276FD /* SceneRendererService.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -250,6 +253,7 @@
 				B4838B6D2E2039B3007276FD /* StormLogger.swift in Sources */,
 				B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */,
 				B437BE8C2E1E5F480045436F /* SystemRegistry.swift in Sources */,
+				B4838B712E204566007276FD /* SceneRendererService.swift in Sources */,
 				B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */,
 				B4838B6B2E20340D007276FD /* ConsoleLogView.swift in Sources */,
 				B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */,

@@ -16,8 +16,13 @@ struct ContentView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             // Scene view in the center
-            SceneViewContainer()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if let sceneRenderer: SceneRendererService = registry?.resolve("sceneRenderer") {
+                SceneViewContainer(scene: sceneRenderer.scene)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                Text("No scene available")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
 
             VStack(spacing: 16) {
                 // App title

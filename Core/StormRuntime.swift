@@ -28,6 +28,11 @@ final class StormRuntime {
     func start() {
         StormLog("[▶️] StormRuntime starting...")
         pluginHost.initializePlugins(kernel: kernel, registry: registry)
+        if let sceneRenderer: SceneRendererService = registry.resolve("sceneRenderer") {
+            kernel.registerSystem { [weak sceneRenderer] _ in
+                sceneRenderer?.updateScene()
+            }
+        }
         kernel.start()
     }
 
@@ -45,6 +50,9 @@ final class StormRuntime {
 
         let ecs = ECSCore()
         registry.ecs = ecs  // ECS core shared service.
+
+        let sceneRenderer = SceneRendererService(ecs: ecs)
+        registry.register(sceneRenderer, for: "sceneRenderer")
 
         registry.ui = composer  // UIComposer shared service.
 
