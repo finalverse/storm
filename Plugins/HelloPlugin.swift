@@ -15,14 +15,14 @@ final class HelloPlugin: StormPlugin {
     private var tickCount = 0
 
     func setup(registry: SystemRegistry) {
-        print("[👋] HelloPlugin setup complete.")
+        StormLog("[👋] HelloPlugin setup complete.")
         storm_hello()   // <---- Should print from Rust
     }
 
     func update(deltaTime: TimeInterval) {
         tickCount += 1
         if tickCount % 60 == 0 {
-            print("[👋] HelloPlugin ticked: \(tickCount)")
+            StormLog("[👋] HelloPlugin ticked: \(tickCount)")
         }
     }
 }

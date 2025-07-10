@@ -27,9 +27,9 @@ final class EchoAgentService: ObservableObject {
         if let agent = ecs.getWorld().getComponent(ofType: EchoAgentComponent.self, from: agentEntityID) {
             agent.mood = mood
             currentMood = mood
-            print("[📝] Updated EchoAgent \(agentEntityID) mood → \(mood)")
+            StormLog("[📝] Updated EchoAgent \(agentEntityID) mood → \(mood)")
         } else {
-            print("[⚠️] No EchoAgent found for stored agentID.")
+            StormLog("[⚠️] No EchoAgent found for stored agentID.")
         }
     }
 
@@ -37,7 +37,7 @@ final class EchoAgentService: ObservableObject {
     func appendMemory(_ message: String) {
         if let agent = ecs.getWorld().getComponent(ofType: EchoAgentComponent.self, from: agentEntityID) {
             agent.memory.append(message)
-            print("[📝] Appended to EchoAgent \(agentEntityID) memory → \(message)")
+            StormLog("[📝] Appended to EchoAgent \(agentEntityID) memory → \(message)")
         }
     }
 

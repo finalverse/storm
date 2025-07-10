@@ -23,6 +23,7 @@ struct StormApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(uiComposer)
+                .environment(\.systemRegistry, runtime.getRegistry())
                 .onAppear {
                     runtime.start()
                 }

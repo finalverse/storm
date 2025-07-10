@@ -24,6 +24,10 @@
 		B4838B612E1FA61F007276FD /* EchoAgentPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B602E1FA61F007276FD /* EchoAgentPlugin.swift */; };
 		B4838B632E1FA75A007276FD /* EchoAgentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B622E1FA75A007276FD /* EchoAgentService.swift */; };
 		B4838B652E1FD4EE007276FD /* AgentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B642E1FD4EE007276FD /* AgentViewModel.swift */; };
+		B4838B672E202241007276FD /* BindableAgentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B662E202241007276FD /* BindableAgentService.swift */; };
+		B4838B692E2033E9007276FD /* ConsoleLogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B682E2033E9007276FD /* ConsoleLogService.swift */; };
+		B4838B6B2E20340D007276FD /* ConsoleLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6A2E20340D007276FD /* ConsoleLogView.swift */; };
+		B4838B6D2E2039B3007276FD /* StormLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6C2E2039B3007276FD /* StormLogger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +53,10 @@
 		B4838B602E1FA61F007276FD /* EchoAgentPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchoAgentPlugin.swift; sourceTree = "<group>"; };
 		B4838B622E1FA75A007276FD /* EchoAgentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchoAgentService.swift; sourceTree = "<group>"; };
 		B4838B642E1FD4EE007276FD /* AgentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentViewModel.swift; sourceTree = "<group>"; };
+		B4838B662E202241007276FD /* BindableAgentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindableAgentService.swift; sourceTree = "<group>"; };
+		B4838B682E2033E9007276FD /* ConsoleLogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogService.swift; sourceTree = "<group>"; };
+		B4838B6A2E20340D007276FD /* ConsoleLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogView.swift; sourceTree = "<group>"; };
+		B4838B6C2E2039B3007276FD /* StormLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormLogger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -113,6 +121,7 @@
 				B437BE7B2E1E58FE0045436F /* ContentView.swift */,
 				B437BE9C2E1EAAB20045436F /* UISchemaView.swift */,
 				B437BE9A2E1EA7550045436F /* UIComposer.swift */,
+				B4838B6A2E20340D007276FD /* ConsoleLogView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -134,6 +143,9 @@
 				B437BE8D2E1E61D20045436F /* ECSCore.swift */,
 				B4838B622E1FA75A007276FD /* EchoAgentService.swift */,
 				B4838B642E1FD4EE007276FD /* AgentViewModel.swift */,
+				B4838B662E202241007276FD /* BindableAgentService.swift */,
+				B4838B682E2033E9007276FD /* ConsoleLogService.swift */,
+				B4838B6C2E2039B3007276FD /* StormLogger.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -232,20 +244,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				B437BE902E1E6A650045436F /* PingPlugin.swift in Sources */,
+				B4838B6D2E2039B3007276FD /* StormLogger.swift in Sources */,
 				B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */,
 				B437BE8C2E1E5F480045436F /* SystemRegistry.swift in Sources */,
 				B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */,
+				B4838B6B2E20340D007276FD /* ConsoleLogView.swift in Sources */,
 				B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */,
 				B437BE8E2E1E61D20045436F /* ECSCore.swift in Sources */,
 				B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */,
 				B4838B632E1FA75A007276FD /* EchoAgentService.swift in Sources */,
 				B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */,
+				B4838B692E2033E9007276FD /* ConsoleLogService.swift in Sources */,
 				B4838B652E1FD4EE007276FD /* AgentViewModel.swift in Sources */,
 				B4838B612E1FA61F007276FD /* EchoAgentPlugin.swift in Sources */,
 				B437BE862E1E59C40045436F /* Kernel.swift in Sources */,
 				B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */,
 				B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */,
 				B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */,
+				B4838B672E202241007276FD /* BindableAgentService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,29 +14,41 @@ struct ContentView: View {
     @Environment(\.systemRegistry) var registry
 
     var body: some View {
-        VStack(spacing: 16) {
-            // App title
-            Text("🌩️ Finalverse Storm v0.1.0")
-                .font(.title)
-                .bold()
+        HStack(alignment: .top) {
+            VStack(spacing: 16) {
+                // App title
+                Text("🌩️ Finalverse Storm v0.1.0")
+                    .font(.title)
+                    .bold()
 
-            // Display current EchoAgent mood if service is available
-            if let agentService = registry?.agentService {
-                AgentMoodView(agentService: agentService)
+                // Display current EchoAgent mood if service is available
+                if let agentService = registry?.agentService {
+                    AgentMoodView(agentService: agentService)
+                }
+
+                // Render HUD from UIComposer schema if available
+                if let root = composer.rootSchema {
+                    UISchemaView(schema: root)
+                } else {
+                    Text("No HUD loaded.")
+                        .foregroundColor(.secondary)
+                }
             }
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.black.opacity(0.95))
+            .foregroundColor(.white)
 
-            // Render HUD from UIComposer schema if available
-            if let root = composer.rootSchema {
-                UISchemaView(schema: root)
-            } else {
-                Text("No HUD loaded.")
-                    .foregroundColor(.secondary)
+            // Console log panel on right
+            if let console: ConsoleLogService = registry?.resolve("consoleLog") {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Console Log")
+                        .font(.caption)
+                        .foregroundColor(.black)
+                    ConsoleLogView(console: console)
+                }
             }
         }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.black.opacity(0.95))
-        .foregroundColor(.white)
     }
 }
 

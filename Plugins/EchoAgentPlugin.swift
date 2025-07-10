@@ -29,7 +29,7 @@ final class EchoAgentSystem: ECSStepSystem {
         for (id, agent) in world.entities(with: EchoAgentComponent.self) {
             agent.countdown -= deltaTime
             if agent.countdown <= 0 {
-                print("[🧠] EchoAgent \(id) mood: \(agent.mood) memory: \(agent.memory.joined(separator: ", "))")
+                StormLog("[🧠] EchoAgent \(id) mood: \(agent.mood) memory: \(agent.memory.joined(separator: ", "))")
                 agent.countdown = 5.0 // Reset interval
             }
         }
@@ -41,10 +41,10 @@ final class EchoAgentPlugin: StormPlugin {
     private var ecs: ECSCore?
 
     func setup(registry: SystemRegistry) {
-        print("[🤖] EchoAgentPlugin setup...")
+        StormLog("[🤖] EchoAgentPlugin setup...")
 
         guard let ecs = registry.ecs else {
-            print("[⚠️] ECSCore not available for EchoAgentPlugin.")
+            StormLog("[⚠️] ECSCore not available for EchoAgentPlugin.")
             return
         }
 

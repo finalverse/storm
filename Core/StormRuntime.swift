@@ -20,25 +20,29 @@ final class StormRuntime {
     private var agentService: EchoAgentService? = nil
 
     init() {
-        print("[🧠] StormRuntime initialized.")
+        StormLog("[🧠] StormRuntime initialized.")
         setupSystems() // Ensure agentService is ready before StormApp uses it.
     }
 
     /// Starts the runtime: initializes services, loads plugins, starts kernel ticking.
     func start() {
-        print("[▶️] StormRuntime starting...")
+        StormLog("[▶️] StormRuntime starting...")
         pluginHost.initializePlugins(kernel: kernel, registry: registry)
         kernel.start()
     }
 
     /// Stops ticking kernel.
     func stop() {
-        print("[⏹️] StormRuntime stopping...")
+        StormLog("[⏹️] StormRuntime stopping...")
         kernel.stop()
     }
 
     /// Initializes shared services and registers them in SystemRegistry.
     private func setupSystems() {
+        let consoleLog = ConsoleLogService()
+        registry.register(consoleLog, for: "consoleLog")
+        StormLogger.shared.configure(console: consoleLog)
+
         let ecs = ECSCore()
         registry.ecs = ecs  // ECS core shared service.
 
@@ -56,16 +60,20 @@ final class StormRuntime {
         self.agentService = agentSvc
         registry.agentService = agentSvc  // Make available globally.
 
+        // Register bindable agent service for reactive UI bindings
+        let bindableAgent = BindableAgentService(agentService: agentSvc)
+        registry.register(bindableAgent, for: "bindableAgent")
+
         // Register UI-driven "echo" namespace commands.
         router.registerHandler(namespace: "echo") { command, args in
             switch command {
             case "sing":
-                print("[🧠] Echo command: sing 🎵")
+                StormLog("[🧠] Echo command: sing 🎵")
             case "setMood":
                 let mood = args.first ?? "Neutral"
                 self.agentService?.updateAgentMood(to: mood)
             default:
-                print("[❓] Unknown echo command: \(command)")
+                StormLog("[❓] Unknown echo command: \(command)")
             }
         }
     }

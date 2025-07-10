@@ -26,7 +26,7 @@ final class PluginHost {
 
     /// Initialize and register all plugins (static for now)
     func initializePlugins(kernel: Kernel, registry: SystemRegistry) {
-        print("[🔌] PluginHost initializing plugins...")
+        StormLog("[🔌] PluginHost initializing plugins...")
 
         // Example: Add a basic log plugin
         let logPlugin = HelloPlugin()
@@ -45,6 +45,6 @@ final class PluginHost {
             plugin.update(deltaTime: delta)
         }
 
-        print("[✅] Registered plugin: \(type(of: plugin))")
+        StormLog("[✅] Registered plugin: \(type(of: plugin))")
     }
 }

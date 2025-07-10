@@ -11,10 +11,10 @@ import Foundation
 
 final class HUDTestPlugin: StormPlugin {
     func setup(registry: SystemRegistry) {
-        print("[🧪] HUDTestPlugin setup...")
+        StormLog("[🧪] HUDTestPlugin setup...")
 
         guard let composer = registry.ui else {
-            print("[⚠️] UIComposer not found.")
+            StormLog("[⚠️] UIComposer not found.")
             return
         }
 

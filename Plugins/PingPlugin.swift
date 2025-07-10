@@ -24,7 +24,7 @@ final class PingSystem: ECSStepSystem {
             updated.countdown -= deltaTime
 
             if updated.countdown <= 0 {
-                print("[📡] Ping from entity \(id)")
+                StormLog("[📡] Ping from entity \(id)")
                 updated.countdown = 3.0 // reset
             }
 
@@ -37,10 +37,10 @@ final class PingPlugin: StormPlugin {
     private var ecs: ECSCore?
 
     func setup(registry: SystemRegistry) {
-        print("[📡] PingPlugin setup")
+        StormLog("[📡] PingPlugin setup")
 
         guard let ecs = registry.ecs else {
-            print("[⚠️] ECSCore not found in registry.")
+            StormLog("[⚠️] ECSCore not found in registry.")
             return
         }
 
