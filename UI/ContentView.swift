@@ -14,19 +14,21 @@ struct ContentView: View {
     @Environment(\.systemRegistry) var registry
 
     var body: some View {
-        HStack(alignment: .top) {
+        HStack(alignment: .top, spacing: 0) {
+            // Scene view in the center
+            SceneViewContainer()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
             VStack(spacing: 16) {
                 // App title
                 Text("🌩️ Finalverse Storm v0.1.0")
                     .font(.title)
                     .bold()
 
-                // Display current EchoAgent mood if service is available
                 if let agentService = registry?.agentService {
                     AgentMoodView(agentService: agentService)
                 }
 
-                // Render HUD from UIComposer schema if available
                 if let root = composer.rootSchema {
                     UISchemaView(schema: root)
                 } else {
@@ -35,7 +37,7 @@ struct ContentView: View {
                 }
             }
             .padding()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(width: 300)
             .background(Color.black.opacity(0.95))
             .foregroundColor(.white)
 

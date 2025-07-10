@@ -28,6 +28,7 @@
 		B4838B692E2033E9007276FD /* ConsoleLogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B682E2033E9007276FD /* ConsoleLogService.swift */; };
 		B4838B6B2E20340D007276FD /* ConsoleLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6A2E20340D007276FD /* ConsoleLogView.swift */; };
 		B4838B6D2E2039B3007276FD /* StormLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6C2E2039B3007276FD /* StormLogger.swift */; };
+		B4838B6F2E2041BF007276FD /* SceneViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,7 @@
 		B4838B682E2033E9007276FD /* ConsoleLogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogService.swift; sourceTree = "<group>"; };
 		B4838B6A2E20340D007276FD /* ConsoleLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogView.swift; sourceTree = "<group>"; };
 		B4838B6C2E2039B3007276FD /* StormLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormLogger.swift; sourceTree = "<group>"; };
+		B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewContainer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -122,6 +124,7 @@
 				B437BE9C2E1EAAB20045436F /* UISchemaView.swift */,
 				B437BE9A2E1EA7550045436F /* UIComposer.swift */,
 				B4838B6A2E20340D007276FD /* ConsoleLogView.swift */,
+				B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -252,6 +255,7 @@
 				B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */,
 				B437BE8E2E1E61D20045436F /* ECSCore.swift in Sources */,
 				B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */,
+				B4838B6F2E2041BF007276FD /* SceneViewContainer.swift in Sources */,
 				B4838B632E1FA75A007276FD /* EchoAgentService.swift in Sources */,
 				B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */,
 				B4838B692E2033E9007276FD /* ConsoleLogService.swift in Sources */,
