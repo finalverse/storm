@@ -10,34 +10,43 @@
 import Foundation
 
 /// Helper service for working with EchoAgent entities.
-final class EchoAgentService {
+final class EchoAgentService: ObservableObject {
 
     private let ecs: ECSCore
+    private let agentEntityID: EntityID
+    @Published var currentMood: String = "Unknown"
 
-    init(ecs: ECSCore) {
+    init(ecs: ECSCore, agentID: EntityID) {
         self.ecs = ecs
+        self.agentEntityID = agentID
+        refreshMood()
     }
 
-    /// Finds the first EchoAgent entity (for simplicity).
-    func findFirstAgent() -> (EntityID, EchoAgentComponent)? {
-        return ecs.getWorld().entities(with: EchoAgentComponent.self).first
-    }
-
-    /// Updates mood of the first agent found.
+    /// Updates mood of the tracked agent and publishes it.
     func updateAgentMood(to mood: String) {
-        if let (id, agent) = findFirstAgent() {
+        if let agent = ecs.getWorld().getComponent(ofType: EchoAgentComponent.self, from: agentEntityID) {
             agent.mood = mood
-            print("[📝] Updated EchoAgent \(id) mood → \(mood)")
+            currentMood = mood
+            print("[📝] Updated EchoAgent \(agentEntityID) mood → \(mood)")
         } else {
-            print("[⚠️] No EchoAgent found to update.")
+            print("[⚠️] No EchoAgent found for stored agentID.")
         }
     }
 
     /// Appends a message to the agent's memory.
     func appendMemory(_ message: String) {
-        if let (id, agent) = findFirstAgent() {
+        if let agent = ecs.getWorld().getComponent(ofType: EchoAgentComponent.self, from: agentEntityID) {
             agent.memory.append(message)
-            print("[📝] Appended to EchoAgent \(id) memory → \(message)")
+            print("[📝] Appended to EchoAgent \(agentEntityID) memory → \(message)")
+        }
+    }
+
+    /// Refreshes the published mood property.
+    func refreshMood() {
+        if let agent = ecs.getWorld().getComponent(ofType: EchoAgentComponent.self, from: agentEntityID) {
+            currentMood = agent.mood
+        } else {
+            currentMood = "Unknown"
         }
     }
 }

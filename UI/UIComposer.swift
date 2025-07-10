@@ -17,6 +17,7 @@ struct UISchema: Codable, Identifiable {
     var label: String?
     var icon: String?
     var action: String?
+    var bind: String?  // Optional binding expression
     var children: [UISchema]?
 }
 

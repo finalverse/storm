@@ -38,6 +38,12 @@ final class HUDTestPlugin: StormPlugin {
               "action": "echo.setMood Happy"
             },
             {
+              "id": "lbl_agent_mood",
+              "type": "bindLabel",
+              "label": "Mood",
+              "bind": "agentService.currentMood"
+            },
+            {
               "id": "lbl_hello",
               "type": "label",
               "label": "Welcome, Echo."

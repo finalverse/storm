@@ -38,10 +38,20 @@ struct UISchemaView: View {
             Text(schema.label ?? "")
                 .font(.headline)
 
+        case "bindLabel":
+            if let agentService = registry?.agentService {
+                Text("\(schema.label ?? "Mood"): \(agentService.currentMood)")
+                    .font(.headline)
+            } else {
+                Text("\(schema.label ?? "Mood"): [Unavailable]")
+                    .font(.headline)
+            }
+
         case "panel":
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(schema.children ?? []) { child in
                     UISchemaView(schema: child)
+                        .environment(\.systemRegistry, registry)  // propagate registry explicitly
                 }
             }
             .padding()
@@ -53,6 +63,7 @@ struct UISchemaView: View {
         }
     }
 }
+
 
 private struct SystemRegistryKey: EnvironmentKey {
     static let defaultValue: SystemRegistry? = nil

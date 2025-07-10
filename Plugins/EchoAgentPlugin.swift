@@ -53,10 +53,6 @@ final class EchoAgentPlugin: StormPlugin {
         // Register system.
         ecs.registerSystem(EchoAgentSystem())
 
-        // Create agent entity.
-        let entity = ecs.getWorld().createEntity()
-        let agent = EchoAgentComponent(mood: "Curious", memory: ["Welcome", "First boot"])
-        ecs.getWorld().addComponent(agent, to: entity)
     }
 
     func update(deltaTime: TimeInterval) {

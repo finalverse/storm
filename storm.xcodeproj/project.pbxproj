@@ -23,6 +23,7 @@
 		B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA92E1F89810045436F /* StormRuntime.swift */; };
 		B4838B612E1FA61F007276FD /* EchoAgentPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B602E1FA61F007276FD /* EchoAgentPlugin.swift */; };
 		B4838B632E1FA75A007276FD /* EchoAgentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B622E1FA75A007276FD /* EchoAgentService.swift */; };
+		B4838B652E1FD4EE007276FD /* AgentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B642E1FD4EE007276FD /* AgentViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 		B437BEA92E1F89810045436F /* StormRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormRuntime.swift; sourceTree = "<group>"; };
 		B4838B602E1FA61F007276FD /* EchoAgentPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchoAgentPlugin.swift; sourceTree = "<group>"; };
 		B4838B622E1FA75A007276FD /* EchoAgentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchoAgentService.swift; sourceTree = "<group>"; };
+		B4838B642E1FD4EE007276FD /* AgentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -131,6 +133,7 @@
 			children = (
 				B437BE8D2E1E61D20045436F /* ECSCore.swift */,
 				B4838B622E1FA75A007276FD /* EchoAgentService.swift */,
+				B4838B642E1FD4EE007276FD /* AgentViewModel.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -237,6 +240,7 @@
 				B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */,
 				B4838B632E1FA75A007276FD /* EchoAgentService.swift in Sources */,
 				B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */,
+				B4838B652E1FD4EE007276FD /* AgentViewModel.swift in Sources */,
 				B4838B612E1FA61F007276FD /* EchoAgentPlugin.swift in Sources */,
 				B437BE862E1E59C40045436F /* Kernel.swift in Sources */,
 				B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */,

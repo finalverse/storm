@@ -10,12 +10,19 @@ import SwiftUI
 @main
 struct StormApp: App {
 
-    private let runtime = StormRuntime()
+    private let runtime: StormRuntime
+    private let uiComposer: UIComposer
+
+    init() {
+        let runtimeInstance = StormRuntime()
+        self.runtime = runtimeInstance
+        self.uiComposer = runtimeInstance.getUIComposer()
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(runtime.getUIComposer())
+                .environmentObject(uiComposer)
                 .onAppear {
                     runtime.start()
                 }
