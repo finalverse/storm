@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE7B2E1E58FE0045436F /* ContentView.swift */; };
-		B437BE862E1E59C40045436F /* RuntimeKernel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE852E1E59C40045436F /* RuntimeKernel.swift */; };
+		B437BE862E1E59C40045436F /* Kernel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE852E1E59C40045436F /* Kernel.swift */; };
 		B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE872E1E5DFA0045436F /* PluginHost.swift */; };
 		B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE892E1E5E500045436F /* HelloPlugin.swift */; };
 		B437BE8C2E1E5F480045436F /* SystemRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE8B2E1E5F480045436F /* SystemRegistry.swift */; };
@@ -20,12 +20,13 @@
 		B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9C2E1EAAB20045436F /* UISchemaView.swift */; };
 		B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9E2E1EBEBA0045436F /* HUDTestPlugin.swift */; };
 		B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA02E1EC2350045436F /* UIScriptRouter.swift */; };
+		B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA92E1F89810045436F /* StormRuntime.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B437BE772E1E58FE0045436F /* Storm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Storm.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B437BE7B2E1E58FE0045436F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		B437BE852E1E59C40045436F /* RuntimeKernel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeKernel.swift; sourceTree = "<group>"; };
+		B437BE852E1E59C40045436F /* Kernel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kernel.swift; sourceTree = "<group>"; };
 		B437BE872E1E5DFA0045436F /* PluginHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginHost.swift; sourceTree = "<group>"; };
 		B437BE892E1E5E500045436F /* HelloPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelloPlugin.swift; sourceTree = "<group>"; };
 		B437BE8B2E1E5F480045436F /* SystemRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemRegistry.swift; sourceTree = "<group>"; };
@@ -41,6 +42,7 @@
 		B437BEA02E1EC2350045436F /* UIScriptRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScriptRouter.swift; sourceTree = "<group>"; };
 		B437BEA62E1ED3030045436F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B437BEA82E1ED36D0045436F /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
+		B437BEA92E1F89810045436F /* StormRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormRuntime.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -90,10 +92,11 @@
 		B437BE832E1E592A0045436F /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				B437BE852E1E59C40045436F /* RuntimeKernel.swift */,
+				B437BE852E1E59C40045436F /* Kernel.swift */,
 				B437BE872E1E5DFA0045436F /* PluginHost.swift */,
 				B437BE8B2E1E5F480045436F /* SystemRegistry.swift */,
 				B437BEA02E1EC2350045436F /* UIScriptRouter.swift */,
+				B437BEA92E1F89810045436F /* StormRuntime.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -226,7 +229,8 @@
 				B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */,
 				B437BE8E2E1E61D20045436F /* ECSCore.swift in Sources */,
 				B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */,
-				B437BE862E1E59C40045436F /* RuntimeKernel.swift in Sources */,
+				B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */,
+				B437BE862E1E59C40045436F /* Kernel.swift in Sources */,
 				B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */,
 				B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */,
 				B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */,

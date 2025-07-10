@@ -1,5 +1,3 @@
-
-
 # 🌩️ Finalverse Storm
 
 Finalverse Storm is an AI-driven, plugin-extensible, cross-platform virtual world client built in Swift and Rust.
@@ -7,7 +5,7 @@ Finalverse Storm is an AI-driven, plugin-extensible, cross-platform virtual worl
 > Built for macOS, iOS, and visionOS, Storm is modular, ECS-powered, and ready for the age of AI-native simulation.
 
 ## 🚀 Features (v0.1.0)
-- SwiftUI runtime with 60Hz ticking kernel
+- SwiftUI runtime orchestrator (`StormRuntime`) with `Kernel` tick engine
 - PluginHost system with modular plugin registration
 - ECSCore engine for simulation
 - Runtime-driven UI using UISchema + UIComposer
@@ -19,7 +17,7 @@ Finalverse Storm is an AI-driven, plugin-extensible, cross-platform virtual worl
 ```
 .
 ├── App/              # App entry point and SwiftUI lifecycle
-├── Core/             # Kernel runtime, registry, routers
+├── Core/             # StormRuntime, Kernel, registry, routers
 ├── Engine/           # Core systems like ECS
 ├── Plugins/          # Modular plugins (HUD, Echo, etc.)
 ├── UI/               # UISchemaView + Composer

@@ -25,7 +25,7 @@ final class PluginHost {
     private var plugins: [StormPlugin] = []
 
     /// Initialize and register all plugins (static for now)
-    func initializePlugins(kernel: RuntimeKernel, registry: SystemRegistry) {
+    func initializePlugins(kernel: Kernel, registry: SystemRegistry) {
         print("[🔌] PluginHost initializing plugins...")
 
         // Example: Add a basic log plugin
@@ -36,7 +36,7 @@ final class PluginHost {
     }
 
     /// Registers plugin and links it to the kernel tick loop
-    private func register(plugin: StormPlugin, into kernel: RuntimeKernel, registry: SystemRegistry) {
+    private func register(plugin: StormPlugin, into kernel: Kernel, registry: SystemRegistry) {
         plugins.append(plugin)
         plugin.setup(registry: registry)
 

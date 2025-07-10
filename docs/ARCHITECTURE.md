@@ -6,38 +6,39 @@
 
 ## 🧠 Runtime Layer
 
-The Storm engine is orchestrated by a Swift-native `RuntimeKernel`, which ticks registered systems at 60 FPS. It supports:
+The Storm engine is orchestrated by a Swift-native `StormRuntime` (orchestrator) and a pure `Kernel` (tick engine). Together they support:
 
 - Plugin-based modular loading
-- ECS simulation ticks
-- UI updates
-- System-level routing via `SystemRegistry`
+- ECS simulation ticks via Kernel callbacks
+- UI schema injection and routing
+- System service registration via `SystemRegistry`
 
 ### 🔷 High-Level Runtime Overview
 
 ```mermaid
 graph TD
     App["🧩 StormApp (SwiftUI Host)"]
-    Kernel["🌀 RuntimeKernel"]
+    Runtime["🧠 StormRuntime"]
+    Kernel["🌀 Kernel"]
+    Reg["🔧 SystemRegistry"]
     Host["🔌 PluginHost"]
-    Reg["🧠 SystemRegistry"]
     ECS["🧱 ECSCore"]
     UI["🎨 UIComposer"]
     Router["🎯 UIScriptRouter"]
 
-    App --> Kernel
-    App --> Reg
-    App --> Host
+    App --> Runtime
+    Runtime --> Kernel
+    Runtime --> Reg
+    Runtime --> Host
 
-    Host -->|registers| HelloPlugin
-    Host --> PingPlugin
-    Host --> HUDTestPlugin
+    Kernel -->|"tick callbacks"| Reg
+    Host -->|"setup phase"| Reg
 
     Reg --> ECS
     Reg --> UI
     Reg --> Router
 
-    UI -->|injects| UISchemaView
+    UI -->|"injects"| UISchemaView
     UISchemaView --> Router
 ```
 
