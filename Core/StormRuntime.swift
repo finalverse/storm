@@ -64,6 +64,14 @@ final class StormRuntime {
         let agent = EchoAgentComponent(mood: "Curious", memory: ["Welcome", "First boot"])
         ecs.getWorld().addComponent(agent, to: entity)
 
+        let entity2 = ecs.getWorld().createEntity()
+        let agent2 = EchoAgentComponent(mood: "Happy", memory: ["Hello from Agent 2"])
+        ecs.getWorld().addComponent(agent2, to: entity2)
+        
+        let entity3 = ecs.getWorld().createEntity()
+        let agent3 = EchoAgentComponent(mood: "Angry", memory: ["Hello from Agent 3"])
+        ecs.getWorld().addComponent(agent3, to: entity3)
+
         let agentSvc = EchoAgentService(ecs: ecs, agentID: entity)
         self.agentService = agentSvc
         registry.agentService = agentSvc  // Make available globally.

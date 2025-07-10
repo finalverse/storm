@@ -61,16 +61,48 @@ final class SceneRendererService {
 
             let angle = Float(index) / Float(max(agents.count, 1)) * Float.pi * 2
 
+            // Assign unique animation path per agent based on index
             let speed: Float
-            switch agent.mood.lowercased() {
-            case "happy": speed = 1.5
-            case "curious": speed = 1.0
-            case "angry": speed = 2.0
-            default: speed = 1.0
+            let pathOffset: Float
+            let pathType: Int
+
+            switch index % 3 {
+            case 0:
+                speed = 1.0
+                pathOffset = 0
+                pathType = 0
+            case 1:
+                speed = 1.5
+                pathOffset = .pi / 2
+                pathType = 1
+            case 2:
+                speed = 2.0
+                pathOffset = .pi
+                pathType = 2
+            default:
+                speed = 1.0
+                pathOffset = 0
+                pathType = 0
             }
-            let animatedRadius = radius + 0.5 * sin(time * speed + Float(index))
-            let x = animatedRadius * cos(angle)
-            let z = animatedRadius * sin(angle)
+
+            var x: Float = 0
+            var z: Float = 0
+
+            switch pathType {
+            case 0:
+                let r = radius + 0.3 * sin(time * speed + Float(index))
+                x = r * cos(angle + pathOffset)
+                z = r * sin(angle + pathOffset)
+            case 1:
+                x = radius * cos(angle) + 0.5 * sin(time * speed)
+                z = radius * sin(angle)
+            case 2:
+                x = radius * cos(angle)
+                z = radius * sin(angle) + 0.5 * cos(time * speed)
+            default:
+                x = radius * cos(angle)
+                z = radius * sin(angle)
+            }
 
             if let node = agentNodes[entityID] {
                 // Animate color change if needed
