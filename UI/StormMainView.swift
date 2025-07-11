@@ -93,19 +93,16 @@ struct StormMainView: View {
             }
             .padding()
 
-            // Mini-map overlay (placeholder)
-            VStack {
-                Spacer()
-                HStack {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.8))
-                        .frame(width: 100, height: 100)
-                        .cornerRadius(8)
-                        .overlay(Text("Mini-Map").font(.caption))
+            if let sceneRenderer: SceneRendererService = registry?.resolve("sceneRenderer") {
+                VStack {
                     Spacer()
+                    HStack {
+                        MiniMapView(sceneRenderer: sceneRenderer)
+                        Spacer()
+                    }
                 }
+                .padding()
             }
-            .padding()
 
             if let node = selectedNode,
                let agent = agentComponent(for: node) {

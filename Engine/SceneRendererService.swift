@@ -203,4 +203,16 @@ final class SceneRendererService {
     public func entityID(for node: SCNNode) -> EntityID? {
         return agentNodes.first(where: { $0.value == node })?.key
     }
+    /// Returns the positions of all agent nodes in the scene.
+    public var agentPositions: [SCNVector3] {
+        let positions = agentNodes.values.map { $0.position }
+        print("[MiniMap] agentPositions count: \(positions.count), positions: \(positions)")
+        return positions
+    }
+
+    /// Returns the current position of the main camera node.
+    public var cameraPosition: SCNVector3 {
+        print("[MiniMap] cameraPosition: \(mainCameraNode.position)")
+        return mainCameraNode.position
+    }
 }
