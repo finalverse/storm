@@ -20,13 +20,15 @@
 		B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA02E1EC2350045436F /* UIScriptRouter.swift */; };
 		B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA92E1F89810045436F /* StormRuntime.swift */; };
 		B4838B6F2E2041BF007276FD /* SceneViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */; };
-		B4838B712E204566007276FD /* SceneRendererService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B702E204566007276FD /* SceneRendererService.swift */; };
-		B4838B732E205373007276FD /* InteractiveSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B722E205373007276FD /* InteractiveSceneView.swift */; };
-		B4838B752E20C880007276FD /* StormMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B742E20C880007276FD /* StormMainView.swift */; };
+		B4838B712E204566007276FD /* RendererService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B702E204566007276FD /* RendererService.swift */; };
+		B4838B752E20C880007276FD /* StormCockpitView-macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B742E20C880007276FD /* StormCockpitView-macOS.swift */; };
 		B4838B772E20C9A3007276FD /* MiniMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B762E20C9A3007276FD /* MiniMapView.swift */; };
 		B4838B792E20D050007276FD /* AgentDetailCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B782E20D050007276FD /* AgentDetailCard.swift */; };
 		B4838B7B2E20D08B007276FD /* ActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B7A2E20D08B007276FD /* ActionBar.swift */; };
 		B4838B7D2E212E20007276FD /* CompassMiniMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B7C2E212E20007276FD /* CompassMiniMapView.swift */; };
+		B4838B7F2E2174AF007276FD /* LocalWorldPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B7E2E2174AF007276FD /* LocalWorldPlugin.swift */; };
+		B4838B812E2176E7007276FD /* ECSComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B802E2176E7007276FD /* ECSComponents.swift */; };
+		B4838B832E218EF0007276FD /* StormCockpitView-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B822E218EF0007276FD /* StormCockpitView-iOS.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,13 +50,15 @@
 		B437BEA82E1ED36D0045436F /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
 		B437BEA92E1F89810045436F /* StormRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormRuntime.swift; sourceTree = "<group>"; };
 		B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewContainer.swift; sourceTree = "<group>"; };
-		B4838B702E204566007276FD /* SceneRendererService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRendererService.swift; sourceTree = "<group>"; };
-		B4838B722E205373007276FD /* InteractiveSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveSceneView.swift; sourceTree = "<group>"; };
-		B4838B742E20C880007276FD /* StormMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormMainView.swift; sourceTree = "<group>"; };
+		B4838B702E204566007276FD /* RendererService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererService.swift; sourceTree = "<group>"; };
+		B4838B742E20C880007276FD /* StormCockpitView-macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StormCockpitView-macOS.swift"; sourceTree = "<group>"; };
 		B4838B762E20C9A3007276FD /* MiniMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniMapView.swift; sourceTree = "<group>"; };
 		B4838B782E20D050007276FD /* AgentDetailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailCard.swift; sourceTree = "<group>"; };
 		B4838B7A2E20D08B007276FD /* ActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionBar.swift; sourceTree = "<group>"; };
 		B4838B7C2E212E20007276FD /* CompassMiniMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompassMiniMapView.swift; sourceTree = "<group>"; };
+		B4838B7E2E2174AF007276FD /* LocalWorldPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalWorldPlugin.swift; sourceTree = "<group>"; };
+		B4838B802E2176E7007276FD /* ECSComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ECSComponents.swift; sourceTree = "<group>"; };
+		B4838B822E218EF0007276FD /* StormCockpitView-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StormCockpitView-iOS.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -120,8 +124,8 @@
 				B437BE9C2E1EAAB20045436F /* UISchemaView.swift */,
 				B437BE9A2E1EA7550045436F /* UIComposer.swift */,
 				B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */,
-				B4838B722E205373007276FD /* InteractiveSceneView.swift */,
-				B4838B742E20C880007276FD /* StormMainView.swift */,
+				B4838B742E20C880007276FD /* StormCockpitView-macOS.swift */,
+				B4838B822E218EF0007276FD /* StormCockpitView-iOS.swift */,
 				B4838B762E20C9A3007276FD /* MiniMapView.swift */,
 				B4838B782E20D050007276FD /* AgentDetailCard.swift */,
 				B4838B7A2E20D08B007276FD /* ActionBar.swift */,
@@ -145,7 +149,8 @@
 			isa = PBXGroup;
 			children = (
 				B437BE8D2E1E61D20045436F /* ECSCore.swift */,
-				B4838B702E204566007276FD /* SceneRendererService.swift */,
+				B4838B802E2176E7007276FD /* ECSComponents.swift */,
+				B4838B702E204566007276FD /* RendererService.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -154,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				B437BE892E1E5E500045436F /* HelloPlugin.swift */,
+				B4838B7E2E2174AF007276FD /* LocalWorldPlugin.swift */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -240,12 +246,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B4838B732E205373007276FD /* InteractiveSceneView.swift in Sources */,
+				B4838B832E218EF0007276FD /* StormCockpitView-iOS.swift in Sources */,
+				B4838B812E2176E7007276FD /* ECSComponents.swift in Sources */,
 				B4838B7B2E20D08B007276FD /* ActionBar.swift in Sources */,
 				B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */,
 				B437BE8C2E1E5F480045436F /* SystemRegistry.swift in Sources */,
 				B4838B7D2E212E20007276FD /* CompassMiniMapView.swift in Sources */,
-				B4838B712E204566007276FD /* SceneRendererService.swift in Sources */,
+				B4838B712E204566007276FD /* RendererService.swift in Sources */,
 				B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */,
 				B4838B772E20C9A3007276FD /* MiniMapView.swift in Sources */,
 				B4838B792E20D050007276FD /* AgentDetailCard.swift in Sources */,
@@ -254,7 +261,8 @@
 				B4838B6F2E2041BF007276FD /* SceneViewContainer.swift in Sources */,
 				B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */,
 				B437BE862E1E59C40045436F /* Kernel.swift in Sources */,
-				B4838B752E20C880007276FD /* StormMainView.swift in Sources */,
+				B4838B7F2E2174AF007276FD /* LocalWorldPlugin.swift in Sources */,
+				B4838B752E20C880007276FD /* StormCockpitView-macOS.swift in Sources */,
 				B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */,
 				B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */,
 				B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */,

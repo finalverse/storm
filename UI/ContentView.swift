@@ -14,6 +14,7 @@ struct ContentView: View {
     @Environment(\.systemRegistry) var registry
 
     var body: some View {
-        StormMainView()
+        // Updated to use StormCockpitView as main cockpit entry
+        StormCockpitView()
     }
 }

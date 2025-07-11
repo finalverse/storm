@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import RealityKit
 
 final class StormRuntime {
 
@@ -27,9 +28,9 @@ final class StormRuntime {
     func start() {
         print("[▶️] StormRuntime starting...")
         pluginHost.initializePlugins(kernel: kernel, registry: registry)
-        if let sceneRenderer: SceneRendererService = registry.resolve("sceneRenderer") {
-            kernel.registerSystem { [weak sceneRenderer] _ in
-                sceneRenderer?.updateScene()
+        if let renderer: RendererService = registry.resolve("renderer") {
+            kernel.registerSystem { [weak renderer] _ in
+                renderer?.updateScene()
             }
         }
         kernel.start()
@@ -46,8 +47,10 @@ final class StormRuntime {
         let ecs = ECSCore()
         registry.ecs = ecs  // ECS core shared service.
 
-        let sceneRenderer = SceneRendererService(ecs: ecs)
-        registry.register(sceneRenderer, for: "sceneRenderer")
+        // Create shared ARView for RendererService
+        let arView = ARView(frame: .zero)
+        let renderer = RendererService(ecs: ecs, arView: arView)
+        registry.register(renderer, for: "renderer")
 
         registry.ui = composer  // UIComposer shared service.
 

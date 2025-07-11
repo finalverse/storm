@@ -10,4 +10,13 @@
 
 void storm_hello(void);
 
+typedef struct {
+    float x;
+    float y;
+    float z;
+    unsigned int mood;
+} AgentSpec;
+
+unsigned long storm_local_world_init(AgentSpec* specs, unsigned long max);
+
 #endif

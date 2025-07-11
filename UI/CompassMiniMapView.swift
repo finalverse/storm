@@ -1,59 +1,67 @@
 //
-//  CompassMiniMapView.swift
+//  UI/CompassMiniMapView.swift
 //  Storm
 //
-//  Created by Wenyan Qin on 2025-07-11.
+//  RealityKit-compatible compass minimap view.
+//
+//  Created by Wenyan Qin on 2025-07-12.
 //
 
 import SwiftUI
-import SceneKit
+import RealityKit
 
+#if os(macOS)
 struct CompassMiniMapView: NSViewRepresentable {
     let cameraYaw: Float
 
-    func makeNSView(context: Context) -> SCNView {
-        let scnView = SCNView()
-        scnView.allowsCameraControl = false
-        scnView.backgroundColor = .clear
-
-        let scene = SCNScene()
-
-        // Add a sphere to act as compass/minimap globe
-        let sphere = SCNSphere(radius: 1.0)
-        sphere.firstMaterial?.diffuse.contents = NSColor.gray.withAlphaComponent(0.2)
-        sphere.firstMaterial?.isDoubleSided = true
-        let sphereNode = SCNNode(geometry: sphere)
-        scene.rootNode.addChildNode(sphereNode)
-
-        // Add simple directional markers
-        let marker = SCNCone(topRadius: 0, bottomRadius: 0.1, height: 0.3)
-        marker.firstMaterial?.diffuse.contents = NSColor.red
-        let markerNode = SCNNode(geometry: marker)
-        markerNode.position = SCNVector3(0, 1.2, 0)
-        markerNode.name = "directionMarker"
-        scene.rootNode.addChildNode(markerNode)
-
-        // Add ambient light
-        let light = SCNLight()
-        light.type = .ambient
-        light.color = NSColor.white
-        let lightNode = SCNNode()
-        lightNode.light = light
-        scene.rootNode.addChildNode(lightNode)
-
-        // Camera setup
-        let cameraNode = SCNNode()
-        cameraNode.camera = SCNCamera()
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 3)
-        scene.rootNode.addChildNode(cameraNode)
-
-        scnView.scene = scene
-        return scnView
+    func makeNSView(context: Context) -> ARView {
+        createCompassARView()
     }
 
-    func updateNSView(_ nsView: SCNView, context: Context) {
-        if let markerNode = nsView.scene?.rootNode.childNode(withName: "directionMarker", recursively: true) {
-            markerNode.eulerAngles.y = CGFloat(cameraYaw)
+    func updateNSView(_ nsView: ARView, context: Context) {
+        updateMarkerYaw(in: nsView)
+    }
+}
+#else
+struct CompassMiniMapView: UIViewRepresentable {
+    let cameraYaw: Float
+
+    func makeUIView(context: Context) -> ARView {
+        createCompassARView()
+    }
+
+    func updateUIView(_ uiView: ARView, context: Context) {
+        updateMarkerYaw(in: uiView)
+    }
+}
+#endif
+
+private extension CompassMiniMapView {
+    func createCompassARView() -> ARView {
+        let arView = ARView(frame: .zero)
+        arView.environment.background = .color(.clear)
+
+        let anchor = AnchorEntity(world: .zero)
+
+        let sphere = MeshResource.generateSphere(radius: 1.0)
+        let material = SimpleMaterial(color: .gray.withAlphaComponent(0.2), isMetallic: false)
+        let sphereEntity = ModelEntity(mesh: sphere, materials: [material])
+        anchor.addChild(sphereEntity)
+
+        let cone = MeshResource.generateCone(height: 0.3, radius: 0.1)
+        let coneMaterial = SimpleMaterial(color: .red, isMetallic: false)
+        let markerEntity = ModelEntity(mesh: cone, materials: [coneMaterial])
+        markerEntity.position = SIMD3<Float>(0, 1.2, 0)
+        markerEntity.name = "directionMarker"
+        anchor.addChild(markerEntity)
+
+        arView.scene.addAnchor(anchor)
+        return arView
+    }
+
+    func updateMarkerYaw(in arView: ARView) {
+        if let markerEntity = arView.scene.anchors.first?.children.first(where: { $0.name == "directionMarker" }) {
+            markerEntity.transform.rotation = simd_quatf(angle: cameraYaw, axis: [0, 1, 0])
         }
     }
 }
