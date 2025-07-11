@@ -13,21 +13,12 @@
 		B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE892E1E5E500045436F /* HelloPlugin.swift */; };
 		B437BE8C2E1E5F480045436F /* SystemRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE8B2E1E5F480045436F /* SystemRegistry.swift */; };
 		B437BE8E2E1E61D20045436F /* ECSCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE8D2E1E61D20045436F /* ECSCore.swift */; };
-		B437BE902E1E6A650045436F /* PingPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE8F2E1E6A650045436F /* PingPlugin.swift */; };
 		B437BE972E1E8C1F0045436F /* libstorm-macos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B437BE942E1E8C1F0045436F /* libstorm-macos.a */; platformFilters = (macos, ); };
 		B437BE992E1E8C1F0045436F /* libstorm-ios-sim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B437BE962E1E8C1F0045436F /* libstorm-ios-sim.a */; platformFilter = ios; };
 		B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9A2E1EA7550045436F /* UIComposer.swift */; };
 		B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9C2E1EAAB20045436F /* UISchemaView.swift */; };
-		B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9E2E1EBEBA0045436F /* HUDTestPlugin.swift */; };
 		B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA02E1EC2350045436F /* UIScriptRouter.swift */; };
 		B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA92E1F89810045436F /* StormRuntime.swift */; };
-		B4838B612E1FA61F007276FD /* EchoAgentPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B602E1FA61F007276FD /* EchoAgentPlugin.swift */; };
-		B4838B632E1FA75A007276FD /* EchoAgentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B622E1FA75A007276FD /* EchoAgentService.swift */; };
-		B4838B652E1FD4EE007276FD /* AgentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B642E1FD4EE007276FD /* AgentViewModel.swift */; };
-		B4838B672E202241007276FD /* BindableAgentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B662E202241007276FD /* BindableAgentService.swift */; };
-		B4838B692E2033E9007276FD /* ConsoleLogService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B682E2033E9007276FD /* ConsoleLogService.swift */; };
-		B4838B6B2E20340D007276FD /* ConsoleLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6A2E20340D007276FD /* ConsoleLogView.swift */; };
-		B4838B6D2E2039B3007276FD /* StormLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6C2E2039B3007276FD /* StormLogger.swift */; };
 		B4838B6F2E2041BF007276FD /* SceneViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */; };
 		B4838B712E204566007276FD /* SceneRendererService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B702E204566007276FD /* SceneRendererService.swift */; };
 		B4838B732E205373007276FD /* InteractiveSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B722E205373007276FD /* InteractiveSceneView.swift */; };
@@ -35,6 +26,7 @@
 		B4838B772E20C9A3007276FD /* MiniMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B762E20C9A3007276FD /* MiniMapView.swift */; };
 		B4838B792E20D050007276FD /* AgentDetailCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B782E20D050007276FD /* AgentDetailCard.swift */; };
 		B4838B7B2E20D08B007276FD /* ActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B7A2E20D08B007276FD /* ActionBar.swift */; };
+		B4838B7D2E212E20007276FD /* CompassMiniMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B7C2E212E20007276FD /* CompassMiniMapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,25 +37,16 @@
 		B437BE892E1E5E500045436F /* HelloPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelloPlugin.swift; sourceTree = "<group>"; };
 		B437BE8B2E1E5F480045436F /* SystemRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemRegistry.swift; sourceTree = "<group>"; };
 		B437BE8D2E1E61D20045436F /* ECSCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ECSCore.swift; sourceTree = "<group>"; };
-		B437BE8F2E1E6A650045436F /* PingPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPlugin.swift; sourceTree = "<group>"; };
 		B437BE922E1E77AE0045436F /* libstorm.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libstorm.a; sourceTree = "<group>"; };
 		B437BE942E1E8C1F0045436F /* libstorm-macos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libstorm-macos.a"; path = "libs/libstorm-macos.a"; sourceTree = "<group>"; };
 		B437BE952E1E8C1F0045436F /* libstorm-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libstorm-ios.a"; path = "libs/libstorm-ios.a"; sourceTree = "<group>"; };
 		B437BE962E1E8C1F0045436F /* libstorm-ios-sim.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libstorm-ios-sim.a"; path = "libs/libstorm-ios-sim.a"; sourceTree = "<group>"; };
 		B437BE9A2E1EA7550045436F /* UIComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComposer.swift; sourceTree = "<group>"; };
 		B437BE9C2E1EAAB20045436F /* UISchemaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UISchemaView.swift; sourceTree = "<group>"; };
-		B437BE9E2E1EBEBA0045436F /* HUDTestPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDTestPlugin.swift; sourceTree = "<group>"; };
 		B437BEA02E1EC2350045436F /* UIScriptRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScriptRouter.swift; sourceTree = "<group>"; };
 		B437BEA62E1ED3030045436F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B437BEA82E1ED36D0045436F /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
 		B437BEA92E1F89810045436F /* StormRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormRuntime.swift; sourceTree = "<group>"; };
-		B4838B602E1FA61F007276FD /* EchoAgentPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchoAgentPlugin.swift; sourceTree = "<group>"; };
-		B4838B622E1FA75A007276FD /* EchoAgentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchoAgentService.swift; sourceTree = "<group>"; };
-		B4838B642E1FD4EE007276FD /* AgentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentViewModel.swift; sourceTree = "<group>"; };
-		B4838B662E202241007276FD /* BindableAgentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindableAgentService.swift; sourceTree = "<group>"; };
-		B4838B682E2033E9007276FD /* ConsoleLogService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogService.swift; sourceTree = "<group>"; };
-		B4838B6A2E20340D007276FD /* ConsoleLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleLogView.swift; sourceTree = "<group>"; };
-		B4838B6C2E2039B3007276FD /* StormLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormLogger.swift; sourceTree = "<group>"; };
 		B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewContainer.swift; sourceTree = "<group>"; };
 		B4838B702E204566007276FD /* SceneRendererService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRendererService.swift; sourceTree = "<group>"; };
 		B4838B722E205373007276FD /* InteractiveSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveSceneView.swift; sourceTree = "<group>"; };
@@ -71,6 +54,7 @@
 		B4838B762E20C9A3007276FD /* MiniMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniMapView.swift; sourceTree = "<group>"; };
 		B4838B782E20D050007276FD /* AgentDetailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailCard.swift; sourceTree = "<group>"; };
 		B4838B7A2E20D08B007276FD /* ActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionBar.swift; sourceTree = "<group>"; };
+		B4838B7C2E212E20007276FD /* CompassMiniMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompassMiniMapView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -135,13 +119,13 @@
 				B437BE7B2E1E58FE0045436F /* ContentView.swift */,
 				B437BE9C2E1EAAB20045436F /* UISchemaView.swift */,
 				B437BE9A2E1EA7550045436F /* UIComposer.swift */,
-				B4838B6A2E20340D007276FD /* ConsoleLogView.swift */,
 				B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */,
 				B4838B722E205373007276FD /* InteractiveSceneView.swift */,
 				B4838B742E20C880007276FD /* StormMainView.swift */,
 				B4838B762E20C9A3007276FD /* MiniMapView.swift */,
 				B4838B782E20D050007276FD /* AgentDetailCard.swift */,
 				B4838B7A2E20D08B007276FD /* ActionBar.swift */,
+				B4838B7C2E212E20007276FD /* CompassMiniMapView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -161,11 +145,6 @@
 			isa = PBXGroup;
 			children = (
 				B437BE8D2E1E61D20045436F /* ECSCore.swift */,
-				B4838B622E1FA75A007276FD /* EchoAgentService.swift */,
-				B4838B642E1FD4EE007276FD /* AgentViewModel.swift */,
-				B4838B662E202241007276FD /* BindableAgentService.swift */,
-				B4838B682E2033E9007276FD /* ConsoleLogService.swift */,
-				B4838B6C2E2039B3007276FD /* StormLogger.swift */,
 				B4838B702E204566007276FD /* SceneRendererService.swift */,
 			);
 			path = Engine;
@@ -175,9 +154,6 @@
 			isa = PBXGroup;
 			children = (
 				B437BE892E1E5E500045436F /* HelloPlugin.swift */,
-				B437BE8F2E1E6A650045436F /* PingPlugin.swift */,
-				B437BE9E2E1EBEBA0045436F /* HUDTestPlugin.swift */,
-				B4838B602E1FA61F007276FD /* EchoAgentPlugin.swift */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -265,31 +241,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4838B732E205373007276FD /* InteractiveSceneView.swift in Sources */,
-				B437BE902E1E6A650045436F /* PingPlugin.swift in Sources */,
 				B4838B7B2E20D08B007276FD /* ActionBar.swift in Sources */,
-				B4838B6D2E2039B3007276FD /* StormLogger.swift in Sources */,
 				B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */,
 				B437BE8C2E1E5F480045436F /* SystemRegistry.swift in Sources */,
+				B4838B7D2E212E20007276FD /* CompassMiniMapView.swift in Sources */,
 				B4838B712E204566007276FD /* SceneRendererService.swift in Sources */,
 				B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */,
-				B4838B6B2E20340D007276FD /* ConsoleLogView.swift in Sources */,
 				B4838B772E20C9A3007276FD /* MiniMapView.swift in Sources */,
 				B4838B792E20D050007276FD /* AgentDetailCard.swift in Sources */,
 				B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */,
 				B437BE8E2E1E61D20045436F /* ECSCore.swift in Sources */,
-				B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */,
 				B4838B6F2E2041BF007276FD /* SceneViewContainer.swift in Sources */,
-				B4838B632E1FA75A007276FD /* EchoAgentService.swift in Sources */,
 				B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */,
-				B4838B692E2033E9007276FD /* ConsoleLogService.swift in Sources */,
-				B4838B652E1FD4EE007276FD /* AgentViewModel.swift in Sources */,
-				B4838B612E1FA61F007276FD /* EchoAgentPlugin.swift in Sources */,
 				B437BE862E1E59C40045436F /* Kernel.swift in Sources */,
 				B4838B752E20C880007276FD /* StormMainView.swift in Sources */,
 				B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */,
 				B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */,
 				B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */,
-				B4838B672E202241007276FD /* BindableAgentService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -24,16 +24,12 @@ final class PluginHost {
     /// Registered plugins
     private var plugins: [StormPlugin] = []
 
-    /// Initialize and register all plugins (static for now)
+    /// Initialize and register all plugins (demo: only HelloPlugin)
     func initializePlugins(kernel: Kernel, registry: SystemRegistry) {
-        StormLog("[🔌] PluginHost initializing plugins...")
+        print("[🔌] PluginHost initializing plugins...")
 
-        // Example: Add a basic log plugin
         let logPlugin = HelloPlugin()
         register(plugin: logPlugin, into: kernel, registry: registry)
-        register(plugin: PingPlugin(), into: kernel, registry: registry)
-        register(plugin: HUDTestPlugin(), into: kernel, registry: registry)
-        register(plugin: EchoAgentPlugin(), into: kernel, registry: registry)
     }
 
     /// Registers plugin and links it to the kernel tick loop
@@ -45,6 +41,6 @@ final class PluginHost {
             plugin.update(deltaTime: delta)
         }
 
-        StormLog("[✅] Registered plugin: \(type(of: plugin))")
+        print("[✅] Registered plugin: \(type(of: plugin))")
     }
 }

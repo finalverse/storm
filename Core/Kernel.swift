@@ -22,12 +22,12 @@ final class Kernel {
 
     /// Initializes the Kernel instance.
     init() {
-        StormLog("[🌀] Kernel initialized.")
+        print("[🌀] Kernel initialized.")
     }
 
     /// Starts the ticking timer and begins calling registered systems.
     func start() {
-        StormLog("[🌀] Kernel starting...")
+        print("[🌀] Kernel starting...")
         lastTick = .now
         timer = Timer.publish(every: tickRate, on: .main, in: .common)
             .autoconnect()
@@ -38,7 +38,7 @@ final class Kernel {
 
     /// Stops the ticking timer.
     func stop() {
-        StormLog("[🛑] Kernel stopped.")
+        print("[🛑] Kernel stopped.")
         timer?.cancel()
         timer = nil
     }

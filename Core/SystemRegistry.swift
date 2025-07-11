@@ -16,7 +16,7 @@ final class SystemRegistry {
     var ecs: ECSCore? = nil
     var ui: UIComposer? = nil
     var router: UIScriptRouter? = nil
-    var agentService: EchoAgentService? = nil
+    //var agentService: EchoAgentService? = nil
     //var llm: LLMBroker? = nil
     //var audio: AudioEngine? = nil
 

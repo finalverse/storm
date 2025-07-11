@@ -17,7 +17,7 @@ struct UISchemaView: View {
         switch schema.type {
         case "button":
             Button(action: {
-                StormLog("[🧪] Action triggered: \(schema.action ?? "none")")
+                print("[🧪] Action triggered: \(schema.action ?? "none")")
                 
                 // TODO: route action to LLM/Echo later
                 if let action = schema.action {
@@ -39,12 +39,8 @@ struct UISchemaView: View {
                 .font(.headline)
 
         case "bindLabel":
-            if let bindableAgent: BindableAgentService = registry?.resolve("bindableAgent") {
-                BindableAgentMoodView(agent: bindableAgent, schema: schema)
-            } else {
-                Text("\(schema.label ?? "Mood"): [Unavailable]")
-                    .font(.headline)
-            }
+            Text("\(schema.label ?? "Mood"): [Unavailable]")
+                .font(.headline)
 
         case "panel":
             VStack(alignment: .leading, spacing: 8) {
@@ -63,16 +59,6 @@ struct UISchemaView: View {
     }
 }
 
-
-struct BindableAgentMoodView: View {
-    @ObservedObject var agent: BindableAgentService
-    let schema: UISchema
-
-    var body: some View {
-        Text("\(schema.label ?? "Mood"): \(agent.mood)")
-            .font(.headline)
-    }
-}
 
 private struct SystemRegistryKey: EnvironmentKey {
     static let defaultValue: SystemRegistry? = nil

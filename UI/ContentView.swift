@@ -17,13 +17,3 @@ struct ContentView: View {
         StormMainView()
     }
 }
-
-struct AgentMoodView: View {
-    @ObservedObject var agentService: EchoAgentService
-
-    var body: some View {
-        Text("Agent Mood: \(agentService.currentMood)")
-            .font(.subheadline)
-            .foregroundColor(.green)
-    }
-}

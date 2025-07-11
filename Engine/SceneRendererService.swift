@@ -49,113 +49,7 @@ final class SceneRendererService {
     func updateScene() {
         time += 0.02
 
-        let agents = ecs.getWorld().entities(with: EchoAgentComponent.self)
-        var seenEntities = Set<EntityID>()
-
-        let radius: Float = 2.0
-
-        for (index, (entityID, agent)) in agents.enumerated() {
-            seenEntities.insert(entityID)
-
-            let targetColor = color(for: agent.mood)
-
-            let angle = Float(index) / Float(max(agents.count, 1)) * Float.pi * 2
-
-            // Assign unique animation path per agent based on index
-            let speed: Float
-            let pathOffset: Float
-            let pathType: Int
-
-            switch index % 3 {
-            case 0:
-                speed = 1.0
-                pathOffset = 0
-                pathType = 0
-            case 1:
-                speed = 1.5
-                pathOffset = .pi / 2
-                pathType = 1
-            case 2:
-                speed = 2.0
-                pathOffset = .pi
-                pathType = 2
-            default:
-                speed = 1.0
-                pathOffset = 0
-                pathType = 0
-            }
-
-            var x: Float = 0
-            var z: Float = 0
-
-            switch pathType {
-            case 0:
-                let r = radius + 0.3 * sin(time * speed + Float(index))
-                x = r * cos(angle + pathOffset)
-                z = r * sin(angle + pathOffset)
-            case 1:
-                x = radius * cos(angle) + 0.5 * sin(time * speed)
-                z = radius * sin(angle)
-            case 2:
-                x = radius * cos(angle)
-                z = radius * sin(angle) + 0.5 * cos(time * speed)
-            default:
-                x = radius * cos(angle)
-                z = radius * sin(angle)
-            }
-
-            if let node = agentNodes[entityID] {
-                // Animate color change if needed
-                if let material = node.geometry?.firstMaterial,
-                   let currentColor = material.diffuse.contents as? NSColor,
-                   currentColor != targetColor {
-                    SCNTransaction.begin()
-                    SCNTransaction.animationDuration = 0.5
-                    material.diffuse.contents = targetColor
-                    SCNTransaction.commit()
-                }
-                node.position = SCNVector3(x, 0, z)
-
-                // Update label if mood changed
-                if let textNode = node.childNode(withName: "label", recursively: false),
-                   let textGeometry = textNode.geometry as? SCNText,
-                   (textGeometry.string as? String) != agent.mood {
-                    textGeometry.string = agent.mood
-                }
-            } else {
-                // New node
-                let sphere = SCNSphere(radius: 0.3)
-                let material = SCNMaterial()
-                material.diffuse.contents = targetColor
-                sphere.materials = [material]
-
-                let node = SCNNode(geometry: sphere)
-                node.position = SCNVector3(x, 0, z)
-                node.name = "agent"
-
-                // Add floating text label above agent node
-                let text = SCNText(string: agent.mood, extrusionDepth: 0.1)
-                text.font = NSFont.systemFont(ofSize: 0.2)
-                text.flatness = 0.05
-                text.firstMaterial?.diffuse.contents = NSColor.white
-                text.firstMaterial?.emission.contents = NSColor.white
-                text.firstMaterial?.lightingModel = .constant
-
-                let textNode = SCNNode(geometry: text)
-                textNode.position = SCNVector3(0, 0.5, 0)
-                textNode.scale = SCNVector3(0.2, 0.2, 0.2)
-                textNode.name = "label"
-                textNode.castsShadow = false
-                // Billboard so label always faces camera
-                let billboardConstraint = SCNBillboardConstraint()
-                billboardConstraint.freeAxes = .Y
-                textNode.constraints = [billboardConstraint]
-                node.addChildNode(textNode)
-
-                scene.rootNode.addChildNode(node)
-                agentNodes[entityID] = node
-            }
-        }
+        let seenEntities = Set<EntityID>()
 
         // Remove nodes for entities no longer present
         for (entityID, node) in agentNodes {
@@ -214,5 +108,10 @@ final class SceneRendererService {
     public var cameraPosition: SCNVector3 {
         print("[MiniMap] cameraPosition: \(mainCameraNode.position)")
         return mainCameraNode.position
+    }
+
+    /// Returns the yaw (rotation around Y axis) of the main camera node in radians.
+    public var cameraYaw: Float {
+        return Float(mainCameraNode.eulerAngles.y)
     }
 }

@@ -17,13 +17,13 @@ final class UIScriptRouter {
 
     func registerHandler(namespace: String, handler: @escaping UIActionHandler) {
         handlers[namespace] = handler
-        StormLog("[🎯] Registered UI namespace: \(namespace)")
+        print("[🎯] Registered UI namespace: \(namespace)")
     }
 
     func route(action: String) {
         let parts = action.split(separator: ".").map(String.init)
         guard parts.count >= 2 else {
-            StormLog("[⚠️] Invalid action: \(action)")
+            print("[⚠️] Invalid action: \(action)")
             return
         }
 
@@ -34,7 +34,7 @@ final class UIScriptRouter {
         if let handler = handlers[namespace] {
             handler(command, args)
         } else {
-            StormLog("[❌] No handler for namespace: \(namespace)")
+            print("[❌] No handler for namespace: \(namespace)")
         }
     }
 }

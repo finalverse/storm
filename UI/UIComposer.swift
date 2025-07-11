@@ -30,9 +30,9 @@ final class UIComposer: ObservableObject {
             let data = try Data(contentsOf: file)
             let schema = try JSONDecoder().decode(UISchema.self, from: data)
             self.rootSchema = schema
-            StormLog("[🧩] Loaded UI schema: \(schema.id)")
+            print("[🧩] Loaded UI schema: \(schema.id)")
         } catch {
-            StormLog("[❌] Failed to load UI schema: \(error)")
+            print("[❌] Failed to load UI schema: \(error)")
         }
     }
 
@@ -40,9 +40,9 @@ final class UIComposer: ObservableObject {
         if let data = jsonString.data(using: .utf8) {
             do {
                 self.rootSchema = try JSONDecoder().decode(UISchema.self, from: data)
-                StormLog("[🧩] Parsed inline UI schema: \(rootSchema?.id ?? "?")")
+                print("[🧩] Parsed inline UI schema: \(rootSchema?.id ?? "?")")
             } catch {
-                StormLog("[❌] JSON parse error: \(error)")
+                print("[❌] JSON parse error: \(error)")
             }
         }
     }
