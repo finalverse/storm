@@ -14,48 +14,7 @@ struct ContentView: View {
     @Environment(\.systemRegistry) var registry
 
     var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            // Scene view in the center
-            if let sceneRenderer: SceneRendererService = registry?.resolve("sceneRenderer") {
-                SceneViewContainer(scene: sceneRenderer.scene)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                Text("No scene available")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-
-            VStack(spacing: 16) {
-                // App title
-                Text("🌩️ Finalverse Storm v0.1.0")
-                    .font(.title)
-                    .bold()
-
-                if let agentService = registry?.agentService {
-                    AgentMoodView(agentService: agentService)
-                }
-
-                if let root = composer.rootSchema {
-                    UISchemaView(schema: root)
-                } else {
-                    Text("No HUD loaded.")
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding()
-            .frame(width: 300)
-            .background(Color.black.opacity(0.95))
-            .foregroundColor(.white)
-
-            // Console log panel on right
-            if let console: ConsoleLogService = registry?.resolve("consoleLog") {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Console Log")
-                        .font(.caption)
-                        .foregroundColor(.black)
-                    ConsoleLogView(console: console)
-                }
-            }
-        }
+        StormMainView()
     }
 }
 

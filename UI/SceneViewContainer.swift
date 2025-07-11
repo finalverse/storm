@@ -19,6 +19,7 @@ import SceneKit
 
 struct SceneViewContainer: NSViewRepresentable {
     let scene: SCNScene
+    let onSelect: ((SCNNode) -> Void)?
 
     @Environment(\.systemRegistry) private var systemRegistry
 
@@ -54,17 +55,19 @@ struct SceneViewContainer: NSViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(scene: scene, registry: systemRegistry)
+        Coordinator(scene: scene, registry: systemRegistry, onSelect: onSelect)
     }
 
     class Coordinator: NSObject {
         let scene: SCNScene
         let registry: SystemRegistry?
+        let onSelect: ((SCNNode) -> Void)?
         var selectedNode: SCNNode?
 
-        init(scene: SCNScene, registry: SystemRegistry?) {
+        init(scene: SCNScene, registry: SystemRegistry?, onSelect: ((SCNNode) -> Void)?) {
             self.scene = scene
             self.registry = registry
+            self.onSelect = onSelect
         }
 
         @objc func handleClick(_ sender: NSClickGestureRecognizer) {
@@ -75,6 +78,7 @@ struct SceneViewContainer: NSViewRepresentable {
                let sceneRenderer: SceneRendererService = registry.resolve("sceneRenderer"),
                let node = sceneRenderer.node(at: location, in: view) {
                 sceneRenderer.highlight(node: node)
+                self.onSelect?(node)
             }
         }
         

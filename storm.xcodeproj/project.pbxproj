@@ -31,6 +31,10 @@
 		B4838B6F2E2041BF007276FD /* SceneViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */; };
 		B4838B712E204566007276FD /* SceneRendererService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B702E204566007276FD /* SceneRendererService.swift */; };
 		B4838B732E205373007276FD /* InteractiveSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B722E205373007276FD /* InteractiveSceneView.swift */; };
+		B4838B752E20C880007276FD /* StormMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B742E20C880007276FD /* StormMainView.swift */; };
+		B4838B772E20C9A3007276FD /* MiniMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B762E20C9A3007276FD /* MiniMapView.swift */; };
+		B4838B792E20D050007276FD /* AgentDetailCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B782E20D050007276FD /* AgentDetailCard.swift */; };
+		B4838B7B2E20D08B007276FD /* ActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B7A2E20D08B007276FD /* ActionBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +67,10 @@
 		B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewContainer.swift; sourceTree = "<group>"; };
 		B4838B702E204566007276FD /* SceneRendererService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneRendererService.swift; sourceTree = "<group>"; };
 		B4838B722E205373007276FD /* InteractiveSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveSceneView.swift; sourceTree = "<group>"; };
+		B4838B742E20C880007276FD /* StormMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormMainView.swift; sourceTree = "<group>"; };
+		B4838B762E20C9A3007276FD /* MiniMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniMapView.swift; sourceTree = "<group>"; };
+		B4838B782E20D050007276FD /* AgentDetailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailCard.swift; sourceTree = "<group>"; };
+		B4838B7A2E20D08B007276FD /* ActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -130,6 +138,10 @@
 				B4838B6A2E20340D007276FD /* ConsoleLogView.swift */,
 				B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */,
 				B4838B722E205373007276FD /* InteractiveSceneView.swift */,
+				B4838B742E20C880007276FD /* StormMainView.swift */,
+				B4838B762E20C9A3007276FD /* MiniMapView.swift */,
+				B4838B782E20D050007276FD /* AgentDetailCard.swift */,
+				B4838B7A2E20D08B007276FD /* ActionBar.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -254,12 +266,15 @@
 			files = (
 				B4838B732E205373007276FD /* InteractiveSceneView.swift in Sources */,
 				B437BE902E1E6A650045436F /* PingPlugin.swift in Sources */,
+				B4838B7B2E20D08B007276FD /* ActionBar.swift in Sources */,
 				B4838B6D2E2039B3007276FD /* StormLogger.swift in Sources */,
 				B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */,
 				B437BE8C2E1E5F480045436F /* SystemRegistry.swift in Sources */,
 				B4838B712E204566007276FD /* SceneRendererService.swift in Sources */,
 				B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */,
 				B4838B6B2E20340D007276FD /* ConsoleLogView.swift in Sources */,
+				B4838B772E20C9A3007276FD /* MiniMapView.swift in Sources */,
+				B4838B792E20D050007276FD /* AgentDetailCard.swift in Sources */,
 				B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */,
 				B437BE8E2E1E61D20045436F /* ECSCore.swift in Sources */,
 				B437BE9F2E1EBEBA0045436F /* HUDTestPlugin.swift in Sources */,
@@ -270,6 +285,7 @@
 				B4838B652E1FD4EE007276FD /* AgentViewModel.swift in Sources */,
 				B4838B612E1FA61F007276FD /* EchoAgentPlugin.swift in Sources */,
 				B437BE862E1E59C40045436F /* Kernel.swift in Sources */,
+				B4838B752E20C880007276FD /* StormMainView.swift in Sources */,
 				B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */,
 				B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */,
 				B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */,
