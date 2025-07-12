@@ -20,6 +20,7 @@ struct StormCockpitView: View {
     @State private var showConsoleLog: Bool = true
     @State private var localLogs: [String] = []
 
+
     private var agentStatusSummary: String {
         guard let renderer: RendererService = registry?.resolve("renderer") else { return "No agents." }
         return "Agents: \(renderer.arView.scene.anchors.count)"
@@ -66,7 +67,7 @@ struct StormCockpitView: View {
     var body: some View {
         ZStack {
             if let renderer: RendererService = registry?.resolve("renderer") {
-                ARViewContainer(arView: renderer.arView)
+                ARViewContainer(renderer: renderer)
                     .edgesIgnoringSafeArea(.all)
             } else {
                 Color.black.edgesIgnoringSafeArea(.all)
@@ -142,14 +143,46 @@ struct StormCockpitView: View {
                 }
                 .padding()
             }
+
+            if minimapState == 1, let renderer: RendererService = registry?.resolve("renderer") {
+                VStack {
+                    Spacer()
+                    HStack {
+                        MiniMapView(renderer: renderer)
+                            .frame(width: 120, height: 120)
+                            .background(Color.black.opacity(0.7))
+                            .cornerRadius(60)
+                            .padding(16)
+                        Spacer()
+                    }
+                }
+            }
+            if minimapState == 2, let renderer: RendererService = registry?.resolve("renderer") {
+                VStack {
+                    Spacer()
+                    HStack {
+                        CompassMiniMapView(cameraYaw: 0) // Replace 0 with actual cameraYaw if available
+                            .frame(width: 120, height: 120)
+                            .background(Color.black.opacity(0.7))
+                            .cornerRadius(60)
+                            .padding(16)
+                        Spacer()
+                    }
+                }
+            }
         }
     }
 }
 
 struct ARViewContainer: NSViewRepresentable {
-    let arView: ARView
+    let renderer: RendererService
 
-    func makeNSView(context: Context) -> ARView { arView }
+    func makeNSView(context: Context) -> ARView {
+        let view = renderer.arView
+        view.environment.background = .color(.black)
+        return view
+    }
+
     func updateNSView(_ nsView: ARView, context: Context) { }
 }
 #endif

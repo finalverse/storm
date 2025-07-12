@@ -21,6 +21,17 @@ final class PositionComponent: Component {
     }
 }
 
+/// Represents terrain characteristics for terrain entities.
+final class TerrainComponent: Component {
+    /// Size (width and depth) of the terrain plane.
+    var size: Float
+
+    /// Initializes a TerrainComponent with given size.
+    init(size: Float) {
+        self.size = size
+    }
+}
+
 /// Represents mood metadata for an ECS entity (for styling / UI / logic).
 final class MoodComponent: Component {
     /// Mood string (e.g., "happy", "angry", "neutral").

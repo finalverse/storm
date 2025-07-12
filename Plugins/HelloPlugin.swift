@@ -22,7 +22,7 @@ final class HelloPlugin: StormPlugin {
     func update(deltaTime: TimeInterval) {
         tickCount += 1
         if tickCount % 60 == 0 {
-            print("[👋] HelloPlugin ticked: \(tickCount)")
+           // print("[👋] HelloPlugin ticked: \(tickCount)")
         }
     }
 }

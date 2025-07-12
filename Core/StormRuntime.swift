@@ -47,10 +47,8 @@ final class StormRuntime {
         let ecs = ECSCore()
         registry.ecs = ecs  // ECS core shared service.
 
-        // Create shared ARView for RendererService
-        let arView = ARView(frame: .zero)
-        let renderer = RendererService(ecs: ecs, arView: arView)
-        registry.register(renderer, for: "renderer")
+        // REMOVE ARView creation and RendererService initialization here.
+        // RendererService will be constructed later in StormCockpitView and injected properly.
 
         registry.ui = composer  // UIComposer shared service.
 

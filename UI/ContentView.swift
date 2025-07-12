@@ -15,6 +15,11 @@ struct ContentView: View {
 
     var body: some View {
         // Updated to use StormCockpitView as main cockpit entry
-        StormCockpitView()
+        //StormCockpitView()
+        SimpleView_macOS()
     }
+}
+
+#Preview {
+    ContentView()
 }
