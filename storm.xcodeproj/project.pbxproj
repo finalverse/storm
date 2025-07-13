@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE7B2E1E58FE0045436F /* ContentView.swift */; };
 		B437BE862E1E59C40045436F /* Kernel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE852E1E59C40045436F /* Kernel.swift */; };
 		B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE872E1E5DFA0045436F /* PluginHost.swift */; };
 		B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE892E1E5E500045436F /* HelloPlugin.swift */; };
@@ -18,26 +17,25 @@
 		B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9C2E1EAAB20045436F /* UISchemaView.swift */; };
 		B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA02E1EC2350045436F /* UIScriptRouter.swift */; };
 		B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA92E1F89810045436F /* StormRuntime.swift */; };
-		B4838B6F2E2041BF007276FD /* SceneViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */; };
 		B4838B712E204566007276FD /* RendererService-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B702E204566007276FD /* RendererService-iOS.swift */; };
-		B4838B752E20C880007276FD /* StormCockpitView-macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B742E20C880007276FD /* StormCockpitView-macOS.swift */; };
-		B4838B772E20C9A3007276FD /* MiniMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B762E20C9A3007276FD /* MiniMapView.swift */; };
-		B4838B792E20D050007276FD /* AgentDetailCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B782E20D050007276FD /* AgentDetailCard.swift */; };
-		B4838B7B2E20D08B007276FD /* ActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B7A2E20D08B007276FD /* ActionBar.swift */; };
-		B4838B7D2E212E20007276FD /* CompassMiniMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B7C2E212E20007276FD /* CompassMiniMapView.swift */; };
 		B4838B7F2E2174AF007276FD /* LocalWorldPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B7E2E2174AF007276FD /* LocalWorldPlugin.swift */; };
 		B4838B812E2176E7007276FD /* ECSComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B802E2176E7007276FD /* ECSComponents.swift */; };
-		B4838B832E218EF0007276FD /* StormCockpitView-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B822E218EF0007276FD /* StormCockpitView-iOS.swift */; };
 		B4838B862E2217FB007276FD /* InputController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B852E2217FB007276FD /* InputController.swift */; };
 		B4838B872E2247AC007276FD /* libstorm-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B437BE952E1E8C1F0045436F /* libstorm-ios.a */; platformFilter = ios; };
 		B4838B892E2262E4007276FD /* RendererService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B882E2262E4007276FD /* RendererService.swift */; };
 		B4838B8B2E226426007276FD /* RendererService-macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B8A2E226426007276FD /* RendererService-macOS.swift */; };
-		B4838B8D2E2279D2007276FD /* SimpleView-macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B8C2E2279D2007276FD /* SimpleView-macOS.swift */; };
+		B4838C232E2370D5007276FD /* OSConnectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C222E2370D5007276FD /* OSConnectManager.swift */; };
+		B4838C252E237115007276FD /* VirtualControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C242E237115007276FD /* VirtualControls.swift */; };
+		B4838C272E2371AA007276FD /* OpenSimProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C262E2371AA007276FD /* OpenSimProtocol.swift */; };
+		B4838C292E237796007276FD /* OpenSimECSBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C282E237796007276FD /* OpenSimECSBridge.swift */; };
+		B4838C2B2E237E16007276FD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C2A2E237E16007276FD /* ContentView.swift */; };
+		B4838C372E23F47F007276FD /* CockpitViewShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C362E23F47F007276FD /* CockpitViewShared.swift */; };
+		B4838C432E23F937007276FD /* CockpitView-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C422E23F937007276FD /* CockpitView-iOS.swift */; };
+		B4838C452E23F953007276FD /* CockpitView-macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C442E23F953007276FD /* CockpitView-macOS.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B437BE772E1E58FE0045436F /* Storm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Storm.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B437BE7B2E1E58FE0045436F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B437BE852E1E59C40045436F /* Kernel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Kernel.swift; sourceTree = "<group>"; };
 		B437BE872E1E5DFA0045436F /* PluginHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PluginHost.swift; sourceTree = "<group>"; };
 		B437BE892E1E5E500045436F /* HelloPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelloPlugin.swift; sourceTree = "<group>"; };
@@ -53,20 +51,20 @@
 		B437BEA62E1ED3030045436F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B437BEA82E1ED36D0045436F /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
 		B437BEA92E1F89810045436F /* StormRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormRuntime.swift; sourceTree = "<group>"; };
-		B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneViewContainer.swift; sourceTree = "<group>"; };
 		B4838B702E204566007276FD /* RendererService-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RendererService-iOS.swift"; sourceTree = "<group>"; };
-		B4838B742E20C880007276FD /* StormCockpitView-macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StormCockpitView-macOS.swift"; sourceTree = "<group>"; };
-		B4838B762E20C9A3007276FD /* MiniMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniMapView.swift; sourceTree = "<group>"; };
-		B4838B782E20D050007276FD /* AgentDetailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentDetailCard.swift; sourceTree = "<group>"; };
-		B4838B7A2E20D08B007276FD /* ActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionBar.swift; sourceTree = "<group>"; };
-		B4838B7C2E212E20007276FD /* CompassMiniMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompassMiniMapView.swift; sourceTree = "<group>"; };
 		B4838B7E2E2174AF007276FD /* LocalWorldPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalWorldPlugin.swift; sourceTree = "<group>"; };
 		B4838B802E2176E7007276FD /* ECSComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ECSComponents.swift; sourceTree = "<group>"; };
-		B4838B822E218EF0007276FD /* StormCockpitView-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StormCockpitView-iOS.swift"; sourceTree = "<group>"; };
 		B4838B852E2217FB007276FD /* InputController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputController.swift; sourceTree = "<group>"; };
 		B4838B882E2262E4007276FD /* RendererService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererService.swift; sourceTree = "<group>"; };
 		B4838B8A2E226426007276FD /* RendererService-macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RendererService-macOS.swift"; sourceTree = "<group>"; };
-		B4838B8C2E2279D2007276FD /* SimpleView-macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SimpleView-macOS.swift"; sourceTree = "<group>"; };
+		B4838C222E2370D5007276FD /* OSConnectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSConnectManager.swift; sourceTree = "<group>"; };
+		B4838C242E237115007276FD /* VirtualControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualControls.swift; sourceTree = "<group>"; };
+		B4838C262E2371AA007276FD /* OpenSimProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSimProtocol.swift; sourceTree = "<group>"; };
+		B4838C282E237796007276FD /* OpenSimECSBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSimECSBridge.swift; sourceTree = "<group>"; };
+		B4838C2A2E237E16007276FD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B4838C362E23F47F007276FD /* CockpitViewShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CockpitViewShared.swift; sourceTree = "<group>"; };
+		B4838C422E23F937007276FD /* CockpitView-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CockpitView-iOS.swift"; sourceTree = "<group>"; };
+		B4838C442E23F953007276FD /* CockpitView-macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CockpitView-macOS.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -98,6 +96,7 @@
 				B437BE782E1E58FE0045436F /* App */,
 				B437BE832E1E592A0045436F /* Core */,
 				B437BEA22E1ED1C20045436F /* Engine */,
+				B4838C212E23603F007276FD /* Network */,
 				B437BEA32E1ED21C0045436F /* Plugins */,
 				B437BE842E1E59610045436F /* UI */,
 				B437BE912E1E77AE0045436F /* Frameworks */,
@@ -129,16 +128,12 @@
 		B437BE842E1E59610045436F /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				B4838B7A2E20D08B007276FD /* ActionBar.swift */,
-				B4838B782E20D050007276FD /* AgentDetailCard.swift */,
-				B437BE7B2E1E58FE0045436F /* ContentView.swift */,
-				B4838B7C2E212E20007276FD /* CompassMiniMapView.swift */,
-				B4838B762E20C9A3007276FD /* MiniMapView.swift */,
-				B4838B6E2E2041BF007276FD /* SceneViewContainer.swift */,
-				B4838B8C2E2279D2007276FD /* SimpleView-macOS.swift */,
-				B4838B742E20C880007276FD /* StormCockpitView-macOS.swift */,
-				B4838B822E218EF0007276FD /* StormCockpitView-iOS.swift */,
+				B4838C242E237115007276FD /* VirtualControls.swift */,
+				B4838C2A2E237E16007276FD /* ContentView.swift */,
 				B437BE9A2E1EA7550045436F /* UIComposer.swift */,
+				B4838C362E23F47F007276FD /* CockpitViewShared.swift */,
+				B4838C442E23F953007276FD /* CockpitView-macOS.swift */,
+				B4838C422E23F937007276FD /* CockpitView-iOS.swift */,
 				B437BE9C2E1EAAB20045436F /* UISchemaView.swift */,
 			);
 			path = UI;
@@ -163,6 +158,7 @@
 				B4838B882E2262E4007276FD /* RendererService.swift */,
 				B4838B702E204566007276FD /* RendererService-iOS.swift */,
 				B4838B8A2E226426007276FD /* RendererService-macOS.swift */,
+				B4838C282E237796007276FD /* OpenSimECSBridge.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -182,6 +178,15 @@
 				B437BEA82E1ED36D0045436F /* ARCHITECTURE.md */,
 			);
 			path = docs;
+			sourceTree = "<group>";
+		};
+		B4838C212E23603F007276FD /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				B4838C222E2370D5007276FD /* OSConnectManager.swift */,
+				B4838C262E2371AA007276FD /* OpenSimProtocol.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -258,28 +263,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B4838B832E218EF0007276FD /* StormCockpitView-iOS.swift in Sources */,
 				B4838B8B2E226426007276FD /* RendererService-macOS.swift in Sources */,
 				B4838B812E2176E7007276FD /* ECSComponents.swift in Sources */,
-				B4838B7B2E20D08B007276FD /* ActionBar.swift in Sources */,
 				B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */,
 				B437BE8C2E1E5F480045436F /* SystemRegistry.swift in Sources */,
-				B4838B7D2E212E20007276FD /* CompassMiniMapView.swift in Sources */,
+				B4838C432E23F937007276FD /* CockpitView-iOS.swift in Sources */,
+				B4838C252E237115007276FD /* VirtualControls.swift in Sources */,
 				B4838B712E204566007276FD /* RendererService-iOS.swift in Sources */,
-				B4838B8D2E2279D2007276FD /* SimpleView-macOS.swift in Sources */,
+				B4838C292E237796007276FD /* OpenSimECSBridge.swift in Sources */,
 				B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */,
-				B4838B772E20C9A3007276FD /* MiniMapView.swift in Sources */,
-				B4838B792E20D050007276FD /* AgentDetailCard.swift in Sources */,
+				B4838C372E23F47F007276FD /* CockpitViewShared.swift in Sources */,
 				B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */,
 				B437BE8E2E1E61D20045436F /* ECSCore.swift in Sources */,
-				B4838B6F2E2041BF007276FD /* SceneViewContainer.swift in Sources */,
+				B4838C272E2371AA007276FD /* OpenSimProtocol.swift in Sources */,
 				B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */,
 				B437BE862E1E59C40045436F /* Kernel.swift in Sources */,
 				B4838B7F2E2174AF007276FD /* LocalWorldPlugin.swift in Sources */,
-				B4838B752E20C880007276FD /* StormCockpitView-macOS.swift in Sources */,
-				B437BE7C2E1E58FE0045436F /* ContentView.swift in Sources */,
+				B4838C2B2E237E16007276FD /* ContentView.swift in Sources */,
 				B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */,
+				B4838C452E23F953007276FD /* CockpitView-macOS.swift in Sources */,
 				B4838B862E2217FB007276FD /* InputController.swift in Sources */,
+				B4838C232E2370D5007276FD /* OSConnectManager.swift in Sources */,
 				B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */,
 				B4838B892E2262E4007276FD /* RendererService.swift in Sources */,
 			);

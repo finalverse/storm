@@ -48,7 +48,7 @@ final class StormRuntime {
         registry.ecs = ecs  // ECS core shared service.
 
         // REMOVE ARView creation and RendererService initialization here.
-        // RendererService will be constructed later in StormCockpitView and injected properly.
+        // RendererService will be constructed later in CockpitView and injected properly.
 
         registry.ui = composer  // UIComposer shared service.
 

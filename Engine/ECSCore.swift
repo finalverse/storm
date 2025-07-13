@@ -90,4 +90,17 @@ final class ECSCore {
     func getWorld() -> ECSWorld {
         return world
     }
+    
+    /// Helper function for UI to get entity count safely
+    func getEntityCount() -> Int {
+        let world = getWorld()
+        let positionEntities = world.entities(with: PositionComponent.self)
+        return positionEntities.count
+    }
+    
+    /// Helper function for UI to check if entity has spinning capability
+    func canEntitySpin(_ entityID: EntityID) -> Bool {
+        let world = getWorld()
+        return world.hasComponent(SpinComponent.self, for: entityID)
+    }
 }
