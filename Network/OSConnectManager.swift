@@ -4,9 +4,10 @@
 //
 //  Real UDP OpenSim connection manager with Network framework
 //  Handles OpenSim LLUDP protocol connection, authentication, and packet routing
-//  ENHANCED: Fixed compilation errors and improved integration
+//  FIXED: Reset handshake manager on disconnect to prevent "already in progress" error
+//  FIXED: Compilation errors with NWEndpoint.Port and messageRouter.routeMessage
 //
-//  Created for Finalverse Storm - Real Network Implementation
+//  Created for Finalverse Storm - Fixed Network Implementation
 
 import Foundation
 import Network
@@ -42,6 +43,7 @@ class OSConnectManager: ObservableObject {
     
     // MARK: - Network Connection
     private var connection: NWConnection?
+    private var endpoint: NWEndpoint?
     private var queue = DispatchQueue(label: "OSConnectManagerQueue", qos: .userInitiated)
     private var receiveQueue = DispatchQueue(label: "OSReceiveQueue", qos: .userInitiated)
     
@@ -141,220 +143,183 @@ class OSConnectManager: ObservableObject {
         // Register new ECS bridge handler
         ecsBridgeHandler = ECSBridgeMessageHandler(ecsBridge: ecsBridge)
         messageRouter.registerHandler(ecsBridgeHandler!)
-        print("[🔗] ECS Bridge handler registered post-initialization")
-    }
-
-    /// Update system registry reference (for dependency injection)
-    func setSystemRegistry(_ registry: SystemRegistry) {
-        print("[🔧] Setting system registry reference")
-        self.systemRegistry = registry
-        
-        // Setup ECS bridge integration if not already done
-        if ecsBridgeHandler == nil {
-            setupECSBridgeIntegration()
-        } else {
-            print("[ℹ️] ECS bridge handler already registered")
-        }
+        print("[🔗] ECS bridge registered with connection manager")
     }
     
-    // MARK: Enhanced service integration methods
-
-    /// Try to integrate with all available services from registry
+    /// Set system registry reference and integrate with services
+    func setSystemRegistry(_ registry: SystemRegistry) {
+        systemRegistry = registry
+        print("[🔧] Setting system registry reference")
+        
+        // Try to integrate with available services
+        setupECSBridgeIntegration()
+        print("[🔧] Enhanced service integration attempted")
+    }
+    
+    /// Validate that all required service dependencies are satisfied
+    func validateServiceDependencies() -> Bool {
+        let hasMessageRouter = messageRouter != nil
+        let hasHandshakeManager = handshakeManager != nil
+        let hasHandshakeHandler = handshakeHandler != nil
+        
+        return hasMessageRouter && hasHandshakeManager && hasHandshakeHandler
+    }
+    
+    /// Integrate with system services (called after system initialization)
     func integrateWithServices() {
         guard let systemRegistry = systemRegistry else {
-            print("[⚠️] Cannot integrate services: no system registry available")
+            print("[⚠️] Cannot integrate services - no system registry available")
             return
         }
         
-        print("[🔧] Integrating OSConnectManager with available services...")
-        
-        // Try to get and register ECS bridge
-        if ecsBridgeHandler == nil, let ecsBridge = systemRegistry.getOpenSimBridge() {
-            registerECSBridge(ecsBridge)
+        // Register ourselves in the system registry if not already registered
+        if systemRegistry.resolve("openSimConnection") == nil {
+            systemRegistry.register(self, for: "openSimConnection")
+            print("[📝] Self-registered in system registry")
         }
         
-        // Log available services for debugging
+        // Try to get renderer for enhanced visualization
+        if let renderer: RendererService = systemRegistry.resolve("renderer") {
+            print("[🎨] Renderer service available for enhanced visualization")
+            // Additional renderer integration could go here
+        }
+        
+        // Check for additional service integrations
         logAvailableServices()
     }
-
-    /// Log which services are available in the registry
+    
+    /// Log available services for debugging
     private func logAvailableServices() {
         guard let systemRegistry = systemRegistry else { return }
         
-        print("[📋] Available services in registry:")
-        print("  - ECS: \(systemRegistry.getECS() != nil ? "✅" : "❌")")
-        print("  - Renderer: \(systemRegistry.getRenderer() != nil ? "✅" : "❌")")
-        print("  - OpenSim Bridge: \(systemRegistry.getOpenSimBridge() != nil ? "✅" : "❌")")
-        print("  - Message Router: \(systemRegistry.getMessageRouter() != nil ? "✅" : "❌")")
-        print("  - UI Composer: \(systemRegistry.getUIComposer() != nil ? "✅" : "❌")")
-        print("  - UI Router: \(systemRegistry.getUIRouter() != nil ? "✅" : "❌")")
-    }
-
-    /// Check if all required services are available
-    func validateServiceDependencies() -> Bool {
-        guard let systemRegistry = systemRegistry else {
-            print("[❌] Service validation failed: no system registry")
-            return false
+        let services = [
+            ("ECS", systemRegistry.ecs != nil),
+            ("UI", systemRegistry.ui != nil),
+            ("Router", systemRegistry.router != nil),
+            ("Renderer", systemRegistry.resolve("renderer") != nil),
+            ("OpenSim Bridge", systemRegistry.getOpenSimBridge() != nil)
+        ]
+        
+        for (name, available) in services {
+            print("[🔍] Service \(name): \(available ? "✅" : "❌")")
         }
-        
-        let hasRequiredServices =
-            systemRegistry.getECS() != nil &&
-            systemRegistry.getRenderer() != nil
-        
-        if hasRequiredServices {
-            print("[✅] All required services available for OSConnectManager")
-        } else {
-            print("[⚠️] Missing required services for OSConnectManager")
-        }
-        
-        return hasRequiredServices
     }
     
-    // MARK: - Public Connection Interface
+    // MARK: - Connection Management
     
-    /// Connect to OpenSim server using UDP protocol
-    func connect(to host: String, port: UInt16) {
-        // Check current connection state
-        let canConnect: Bool
-        switch connectionStatus {
-        case .disconnected, .error:
-            canConnect = true
-        case .connecting, .connected:
-            canConnect = false
-        }
+    /// Connect to OpenSim server
+    func connect(to hostname: String, port: UInt16) {
+        // FIXED: Reset handshake manager before attempting new connection
+        resetHandshakeManager()
         
-        guard canConnect else {
-            print("[⚠️] Already connecting or connected")
-            return
-        }
+        print("[🔌] Connecting to OpenSim server: \(hostname):\(port)")
         
-        print("[🔌] Connecting to OpenSim server: \(host):\(port)")
-        
-        // Update UI state on main thread
+        // Update connection status
         DispatchQueue.main.async {
             self.connectionStatus = .connecting
             self.isConnected = false
         }
         
-        // Create UDP endpoint for OpenSim server
-        let nwEndpoint = NWEndpoint.hostPort(
-            host: NWEndpoint.Host(host),
-            port: NWEndpoint.Port(rawValue: port)!
+        // FIXED: Proper NWEndpoint.Port creation without force unwrap
+        guard let nwPort = NWEndpoint.Port(rawValue: port) else {
+            print("[❌] Invalid port number: \(port)")
+            DispatchQueue.main.async {
+                self.connectionStatus = .error("Invalid port number")
+            }
+            return
+        }
+        
+        // Create endpoint
+        endpoint = NWEndpoint.hostPort(
+            host: NWEndpoint.Host(hostname),
+            port: nwPort
         )
         
-        // Configure UDP parameters for optimal performance
-        let params = NWParameters.udp
-        params.allowFastOpen = true
-        params.allowLocalEndpointReuse = true
+        // Create UDP connection
+        connection = NWConnection(to: endpoint!, using: .udp)
         
-        // Create and configure network connection
-        connection = NWConnection(to: nwEndpoint, using: params)
-        setupConnectionHandlers()
+        // Setup connection state handler
+        connection?.stateUpdateHandler = { [weak self] state in
+            self?.handleConnectionStateChange(state)
+        }
         
-        // Start connection on background queue
+        // Start the connection
         connection?.start(queue: queue)
+        
+        // Reset connection state
+        resetConnectionState()
+        
+        // Start receiving data
+        startReceiving()
     }
     
-    /// Disconnect from OpenSim server and cleanup resources
+    /// Disconnect from OpenSim server
     func disconnect() {
         print("[🔌] Disconnecting from OpenSim server")
         
-        // Send logout message if currently connected
+        // Send logout request if connected
         if isConnected {
-            sendLogoutRequest()
+            let logoutMessage = LogoutRequestMessage(agentID: agentID, sessionID: sessionID)
+            sendMessage(logoutMessage)
+            print("[👋] Logout request sent")
         }
         
-        // Cancel network connection
+        // FIXED: Reset handshake manager on disconnect
+        resetHandshakeManager()
+        
+        // Cancel connection
         connection?.cancel()
         connection = nil
         
-        // Stop all timers to prevent memory leaks
+        // Stop timers
         stopTimers()
         
-        // Reset all connection state
-        resetConnectionState()
-        
-        // Update UI state on main thread
+        // Update connection status
         DispatchQueue.main.async {
             self.connectionStatus = .disconnected
             self.isConnected = false
             self.latency = 0
         }
+        
+        // Reset state
+        resetConnectionState()
+        
+        print("[🔌] Connection disconnected")
     }
     
-    // MARK: - Avatar Movement Interface
+    // MARK: - FIXED: Handshake Manager Reset
     
-    /// Send avatar movement update to OpenSim server
-    func moveAvatar(position: SIMD3<Float>, rotation: SIMD2<Float>) {
-        guard isConnected else {
-            print("[⚠️] Cannot move avatar: not connected to server")
-            return
-        }
+    /// Reset handshake manager to allow fresh connection attempts
+    private func resetHandshakeManager() {
+        // Reset the handshake manager state
+        handshakeManager?.reset()
+        print("[🔄] Handshake manager reset for fresh connection")
         
-        // Create agent update message with movement data
-        let message = AgentUpdateMessage(
+        // Generate new session identifiers for the new connection
+        agentID = UUID()
+        sessionID = UUID()
+        circuitCode = UInt32.random(in: 100000...999999)
+        
+        // Create new handshake manager with fresh session data
+        handshakeManager = OpenSimHandshakeManager(
             agentID: agentID,
             sessionID: sessionID,
-            bodyRotation: simd_quatf(angle: rotation.x, axis: [0, 1, 0]), // Y-axis rotation for body
-            headRotation: simd_quatf(angle: rotation.y, axis: [1, 0, 0]), // X-axis rotation for head
-            state: 0, // Walking state
-            position: position,
-            lookAt: SIMD3<Float>(0, 0, 1), // Forward direction
-            upAxis: SIMD3<Float>(0, 1, 0), // Y-up coordinate system
-            leftAxis: SIMD3<Float>(-1, 0, 0), // Left-handed coordinate system
-            cameraCenter: position,
-            cameraAtAxis: SIMD3<Float>(0, 0, 1), // Camera looking forward
-            cameraLeftAxis: SIMD3<Float>(-1, 0, 0), // Camera left axis
-            cameraUpAxis: SIMD3<Float>(0, 1, 0), // Camera up axis
-            far: 256.0, // Far clipping plane
-            aspectRatio: 1.0, // Default aspect ratio
-            throttles: [0, 0, 0, 0], // No throttle input
-            controlFlags: 0, // No control flags set
-            flags: 0 // No additional flags
+            circuitCode: circuitCode
         )
         
-        sendMessage(message)
+        // Update the handshake handler with the new manager
+        handshakeHandler = HandshakeMessageHandler(handshakeManager: handshakeManager!)
+        
+        // Re-register the handler with the message router
+        messageRouter.unregisterHandler("HandshakeHandler")
+        messageRouter.registerHandler(handshakeHandler)
+        
+        print("[🔄] Fresh handshake manager created with new session data")
+        print("[🆔] New AgentID: \(agentID)")
+        print("[🎫] New CircuitCode: \(circuitCode)")
     }
     
-    /// Send teleport request to specific position
-    func teleportAvatar(to position: SIMD3<Float>) {
-        guard isConnected else {
-            print("[⚠️] Cannot teleport avatar: not connected to server")
-            return
-        }
-        
-        // Create teleport request message
-        let message = TeleportLocationRequestMessage(
-            agentID: agentID,
-            sessionID: sessionID,
-            regionHandle: 0, // Current region (0 means current)
-            position: position,
-            lookAt: SIMD3<Float>(0, 0, 1) // Face forward after teleport
-        )
-        
-        sendMessage(message)
-        print("[🚀] Teleport request sent to position: \(position)")
-    }
-    
-    // MARK: - Private Connection Setup
-    
-    /// Setup network connection event handlers
-    private func setupConnectionHandlers() {
-        // Handle connection state changes
-        connection?.stateUpdateHandler = { [weak self] state in
-            self?.handleConnectionStateChange(state)
-        }
-        
-        // Handle connection viability changes
-        connection?.viabilityUpdateHandler = { [weak self] isViable in
-            if !isViable {
-                print("[⚠️] Connection is not viable")
-                DispatchQueue.main.async {
-                    self?.connectionStatus = .error("Connection lost")
-                }
-            }
-        }
-    }
+    // MARK: - Connection State Handling
     
     /// Handle network connection state changes
     private func handleConnectionStateChange(_ state: NWConnection.State) {
@@ -364,9 +329,8 @@ class OSConnectManager: ObservableObject {
                 print("[✅] UDP connection established")
                 self.connectionStatus = .connected
                 self.isConnected = true
-                self.startReceiveLoop() // Begin receiving packets
-                self.startTimers() // Start heartbeat and maintenance timers
-                self.sendUseCircuitCode() // Begin OpenSim handshake
+                self.initiateHandshake()
+                self.startTimers()
                 
             case .failed(let error):
                 print("[❌] Connection failed: \(error)")
@@ -380,6 +344,7 @@ class OSConnectManager: ObservableObject {
                 
             case .waiting(let error):
                 print("[⏳] Connection waiting: \(error)")
+                self.connectionStatus = .connecting
                 
             default:
                 break
@@ -387,218 +352,234 @@ class OSConnectManager: ObservableObject {
         }
     }
     
-    // MARK: - Message Sending
-    
-    /// Send UseCircuitCode message to begin OpenSim handshake
-    private func sendUseCircuitCode() {
+    /// Start the OpenSim handshake process
+    private func initiateHandshake() {
         guard let handshakeManager = handshakeManager else {
-            print("[❌] Handshake manager not available")
+            print("[❌] Cannot initiate handshake: handshake manager not available")
             return
         }
         
-        // Start handshake process and get initial message
-        let message = handshakeManager.startHandshake()
-        sendMessage(message)
+        let useCircuitMessage = handshakeManager.startHandshake()
+        sendMessage(useCircuitMessage)
         print("[🔑] Sent UseCircuitCode with circuit: \(circuitCode)")
     }
     
-    /// Send any OpenSim message to the server
-    private func sendMessage<T: OpenSimMessage>(_ message: T) {
-        do {
-            // Serialize message to binary data
-            let payload = try message.serialize()
-            
-            // Wrap in OpenSim packet with proper headers
-            let packet = wrapInPacket(messageType: message.type, payload: payload)
-            
-            // Send packet over network
-            send(data: packet)
-            
-            // Track message for ACK if reliable delivery required
-            if message.needsAck {
-                pendingAcks[sequenceNumber] = Date()
-            }
-            
-        } catch {
-            print("[❌] Failed to serialize message \(message.type): \(error)")
-        }
-    }
+    // MARK: - Message Sending
     
-    /// Send raw data over network connection
-    private func send(data: Data) {
-        connection?.send(content: data, completion: .contentProcessed({ [weak self] error in
-            if let error = error {
-                print("[❌] Send error: \(error)")
-            } else {
-                // Update statistics on successful send
-                DispatchQueue.main.async {
-                    self?.stats.packetsSent += 1
-                    self?.stats.bytesSent += UInt64(data.count)
+    /// Send a message to the OpenSim server
+    func sendMessage<T: OpenSimMessage>(_ message: T) {
+        guard let connection = connection, isConnected else {
+            print("[⚠️] Cannot send message: not connected")
+            return
+        }
+        
+        do {
+            // Serialize the message
+            let messageData = try message.serialize()
+            
+            // Create packet
+            let packet = OpenSimPacket(
+                messageType: message.type,
+                payload: messageData,
+                sequenceNumber: sequenceNumber,
+                needsAck: message.needsAck
+            )
+            
+            // Serialize packet
+            let packetData = try packet.serialize()
+            
+            // Send packet
+            connection.send(content: packetData, completion: .contentProcessed { error in
+                if let error = error {
+                    print("[❌] Send error: \(error)")
+                } else {
+                    // Track packet for ACK if needed
+                    if packet.needsAck {
+                        self.pendingAcks[self.sequenceNumber] = Date()
+                    }
+                    
+                    // Update statistics
+                    self.stats.packetsSent += 1
+                    self.stats.bytesSent += UInt64(packetData.count)
+                    
+                    // Increment sequence number
+                    self.sequenceNumber += 1
                 }
-            }
-        }))
-    }
-    
-    /// Send logout request message
-    private func sendLogoutRequest() {
-        let message = LogoutRequestMessage(
-            agentID: agentID,
-            sessionID: sessionID
-        )
-        sendMessage(message)
-        print("[👋] Logout request sent")
-    }
-    
-    // MARK: - Packet Creation
-    
-    /// Wrap message payload in OpenSim packet format
-    private func wrapInPacket(messageType: MessageType, payload: Data) -> Data {
-        // Create packet with proper sequence number and flags
-        let packet = OpenSimPacket(
-            messageType: messageType,
-            payload: payload,
-            sequenceNumber: sequenceNumber,
-            needsAck: messageType.needsAck,
-            ackNumber: nil
-        )
-        
-        // Increment sequence number for next packet
-        sequenceNumber += 1
-        
-        do {
-            return try packet.serialize()
+            })
+            
         } catch {
-            print("[❌] Failed to wrap packet: \(error)")
-            return Data()
+            print("[❌] Failed to send message: \(error)")
         }
     }
     
-    // MARK: - Packet Reception
+    // MARK: - Message Receiving
     
-    /// Start continuous packet reception loop
-    private func startReceiveLoop() {
-        connection?.receiveMessage { [weak self] (data, context, isComplete, error) in
-            // Process received data if available
-            if let data = data, !data.isEmpty {
-                self?.handleIncomingPacket(data: data)
-            }
+    /// Start receiving data from the connection
+    private func startReceiving() {
+        guard let connection = connection else { return }
+        
+        connection.receive(minimumIncompleteLength: 1, maximumLength: 1500) { [weak self] data, context, isComplete, error in
             
-            // Handle receive errors
             if let error = error {
                 print("[❌] Receive error: \(error)")
                 return
             }
             
-            // Continue receiving packets
-            self?.startReceiveLoop()
-        }
-    }
-    
-    /// Process incoming packet data
-    private func handleIncomingPacket(data: Data) {
-        receiveQueue.async { [weak self] in
-            do {
-                // Parse incoming data as OpenSim packet
-                let packet = try OpenSimPacket.parse(data)
-                
-                // Update reception statistics
-                DispatchQueue.main.async {
-                    self?.stats.packetsReceived += 1
-                    self?.stats.bytesReceived += UInt64(data.count)
+            if let data = data, !data.isEmpty {
+                self?.receiveQueue.async {
+                    self?.handleReceivedData(data)
                 }
-                
-                // Send ACK if packet requires acknowledgment
-                if packet.needsAck {
-                    self?.sendAcknowledgment(packet.sequenceNumber)
-                }
-                
-                // Route packet to appropriate handlers
-                DispatchQueue.main.async {
-                    self?.routePacket(packet)
-                }
-                
-            } catch {
-                print("[⚠️] Failed to parse incoming packet: \(error)")
             }
-        }
-    }
-    
-    /// Route parsed packet to appropriate message handlers
-    private func routePacket(_ packet: OpenSimPacket) {
-        // Use message router for all packet routing
-        messageRouter.routeMessage(packet)
-        
-        // Handle critical connection management directly
-        switch packet.messageType {
-        case .packetAck:
-            handlePacketAck(packet)
-        default:
-            break // Let router handle everything else
-        }
-    }
-    
-    // MARK: - Direct Message Handlers (Legacy Support)
-    
-    /// Handle region handshake message (integrated with handshake manager)
-    private func handleRegionHandshake(_ packet: OpenSimPacket) {
-        do {
-            let regionHandshake = try RegionHandshakeMessage.parse(packet.payload)
             
-            // Use handshake manager for proper sequence handling
-            if let handshakeManager = handshakeManager,
-               let reply = handshakeManager.handleRegionHandshake(regionHandshake) {
-                sendMessage(reply)
-                
-                // Send CompleteAgentMovement as next step
-                if let completeMovement = handshakeManager.createCompleteAgentMovement() {
-                    sendMessage(completeMovement)
+            // Continue receiving
+            if !isComplete {
+                self?.startReceiving()
+            }
+        }
+    }
+    
+    /// Handle received packet data
+    private func handleReceivedData(_ data: Data) {
+        do {
+            // Parse the packet
+            let packet = try OpenSimPacket.parse(data)
+            
+            // Update statistics
+            stats.packetsReceived += 1
+            stats.bytesReceived += UInt64(data.count)
+            
+            // Handle ACK packets
+            if packet.messageType == .packetAck {
+                if let ackNumber = packet.ackNumber {
+                    handleAckReceived(ackNumber)
                 }
+                return
             }
+            
+            // Check for duplicate packets
+            if receivedPackets.contains(packet.sequenceNumber) {
+                print("[⚠️] Duplicate packet received: \(packet.sequenceNumber)")
+                return
+            }
+            receivedPackets.insert(packet.sequenceNumber)
+            
+            // Send ACK if needed
+            if packet.needsAck {
+                sendAck(for: packet.sequenceNumber)
+            }
+            
+            // FIXED: Route the message through the message router with correct method signature
+            messageRouter.routeMessage(packet)
+            
         } catch {
-            print("[⚠️] Failed to parse RegionHandshake: \(error)")
+            print("[❌] Failed to parse received packet: \(error)")
         }
     }
     
-    /// Handle ping response for latency measurement
-    private func handlePingResponse(_ packet: OpenSimPacket) {
-        if let startTime = lastPingTime {
-            let latencyMs = Int(Date().timeIntervalSince(startTime) * 1000)
-            DispatchQueue.main.async {
-                self.latency = latencyMs
-                self.stats.lastPingTime = Date().timeIntervalSince1970
-                self.stats.averageLatency = (self.stats.averageLatency + TimeInterval(latencyMs)) / 2.0
+    /// Handle ACK received for sent packet
+    private func handleAckReceived(_ ackNumber: UInt32) {
+        if let sentTime = pendingAcks.removeValue(forKey: ackNumber) {
+            let roundTrip = Date().timeIntervalSince(sentTime) * 1000 // Convert to milliseconds
+            
+            // Update latency (simple moving average)
+            if stats.averageLatency == 0 {
+                stats.averageLatency = roundTrip
+            } else {
+                stats.averageLatency = (stats.averageLatency * 0.8) + (roundTrip * 0.2)
             }
-            print("[📡] Ping response: \(latencyMs)ms")
+            
+            DispatchQueue.main.async {
+                self.latency = Int(self.stats.averageLatency)
+            }
         }
     }
     
-    /// Handle packet acknowledgment
-    private func handlePacketAck(_ packet: OpenSimPacket) {
-        // Remove acknowledged packet from pending list
-        if let ackNumber = packet.ackNumber {
-            pendingAcks.removeValue(forKey: ackNumber)
+    /// Send ACK for received packet
+    private func sendAck(for sequenceNumber: UInt32) {
+        guard let connection = connection else { return }
+        
+        // Create ACK packet
+        var ackData = Data()
+        ackData.append(ProtocolConstants.ackFlag)
+        
+        var seqNum = self.sequenceNumber.bigEndian
+        ackData.append(Data(bytes: &seqNum, count: 4))
+        
+        var msgType = MessageType.packetAck.rawValue.bigEndian
+        ackData.append(Data(bytes: &msgType, count: 4))
+        
+        var ackSeqNum = sequenceNumber.bigEndian
+        ackData.append(Data(bytes: &ackSeqNum, count: 4))
+        
+        // Send ACK
+        connection.send(content: ackData, completion: .idempotent)
+        self.sequenceNumber += 1
+    }
+    
+    // MARK: - Movement and Avatar Control
+    
+    /// Teleport avatar to specified position
+    func teleportAvatar(to position: SIMD3<Float>) {
+        guard isHandshakeComplete else {
+            print("[⚠️] Cannot teleport: handshake not complete")
+            return
         }
+        
+        let teleportMessage = TeleportLocationRequestMessage(
+            agentID: agentID,
+            sessionID: sessionID,
+            regionHandle: 0, // Default region handle
+            position: position,
+            lookAt: SIMD3<Float>(1, 0, 0)
+        )
+        
+        sendMessage(teleportMessage)
+        print("[🚀] Teleport request sent to position: \(position)")
     }
     
-    // MARK: - ACK Handling
-    
-    /// Send acknowledgment for received packet
-    private func sendAcknowledgment(_ sequenceNumber: UInt32) {
-        // TODO: Implement PacketAck message sending
-        // For now, just log the ACK requirement
-        // print("[📝] ACK needed for sequence: \(sequenceNumber)")
+    /// Move avatar with position and rotation
+    func moveAvatar(position: SIMD3<Float>, rotation: SIMD2<Float>) {
+        guard isHandshakeComplete else {
+            print("[⚠️] Cannot move avatar: handshake not complete")
+            return
+        }
+        
+        // Create agent update message
+        let agentUpdate = AgentUpdateMessage(
+            agentID: agentID,
+            sessionID: sessionID,
+            bodyRotation: simd_quatf(angle: rotation.y, axis: SIMD3<Float>(0, 1, 0)),
+            headRotation: simd_quatf(angle: rotation.x, axis: SIMD3<Float>(1, 0, 0)),
+            state: 0,
+            position: position,
+            lookAt: SIMD3<Float>(1, 0, 0),
+            upAxis: SIMD3<Float>(0, 1, 0),
+            leftAxis: SIMD3<Float>(-1, 0, 0),
+            cameraCenter: position,
+            cameraAtAxis: SIMD3<Float>(1, 0, 0),
+            cameraLeftAxis: SIMD3<Float>(-1, 0, 0),
+            cameraUpAxis: SIMD3<Float>(0, 1, 0),
+            far: 512.0,
+            aspectRatio: 1.33,
+            throttles: [255, 255, 255, 255],
+            controlFlags: 0,
+            flags: 0
+        )
+        
+        sendMessage(agentUpdate)
+        print("[🚶] Agent update sent: position \(position), rotation \(rotation)")
     }
     
-    // MARK: - Timers
+    // MARK: - Timer Management
     
     /// Start periodic timers for connection maintenance
     private func startTimers() {
-        // Heartbeat timer - send ping every 5 seconds
-        heartbeatTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+        // Heartbeat timer (send pings)
+        latencyTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
             self?.sendPing()
         }
         
-        // ACK timeout checker - check every second for timed out packets
+        // ACK timeout timer
         ackTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.checkAckTimeouts()
         }
@@ -661,7 +642,6 @@ class OSConnectManager: ObservableObject {
     func getConnectionStats() -> ConnectionStats {
         return stats
     }
-    
     
     /// Get session information
     func getSessionInfo() -> (agentID: UUID, sessionID: UUID, circuitCode: UInt32) {

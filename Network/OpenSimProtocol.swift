@@ -4,7 +4,7 @@
 //
 //  Enhanced OpenSim/SecondLife LLUDP protocol with complete handshake flow
 //  Implements UseCircuitCode, RegionHandshake, and CompleteAgentMovement sequences
-//  ENHANCED: Added handshake messages while preserving existing structure
+//  FIXED: Replaced fatalError with graceful handshake reset for reconnection scenarios
 //
 //  Created for Finalverse Storm - Complete Protocol Implementation
 
@@ -727,29 +727,40 @@ struct ChatFromSimulatorMessage {
     let position: SIMD3<Float>
     let message: String
     
+    init(fromName: String, sourceID: UUID, ownerID: UUID, sourceType: UInt8, chatType: UInt8, audible: UInt8, position: SIMD3<Float>, message: String) {
+        self.fromName = fromName
+        self.sourceID = sourceID
+        self.ownerID = ownerID
+        self.sourceType = sourceType
+        self.chatType = chatType
+        self.audible = audible
+        self.position = position
+        self.message = message
+    }
+    
     static func parse(_ data: Data) throws -> ChatFromSimulatorMessage {
         var offset = 0
-        
+
         // Parse from name (variable length string)
         guard offset < data.count else { throw ProtocolError.insufficientData }
         let nameLength = Int(data[offset])
         offset += 1
-        
+
         guard offset + nameLength <= data.count else { throw ProtocolError.insufficientData }
         let fromName = String(data: data.subdata(in: offset..<offset+nameLength), encoding: .utf8) ?? ""
         offset += nameLength
-        
+
         // Parse source ID
         guard offset + 16 <= data.count else { throw ProtocolError.insufficientData }
         let sourceID = UUID(uuid: data.subdata(in: offset..<offset+16).withUnsafeBytes { $0.load(as: uuid_t.self) })
         offset += 16
-        
+
         // Parse owner ID
         guard offset + 16 <= data.count else { throw ProtocolError.insufficientData }
         let ownerID = UUID(uuid: data.subdata(in: offset..<offset+16).withUnsafeBytes { $0.load(as: uuid_t.self) })
         offset += 16
-        
-        // Parse chat parameters
+
+        // Parse sourceType, chatType, audible (each 1 byte)
         guard offset + 3 <= data.count else { throw ProtocolError.insufficientData }
         let sourceType = data[offset]
         offset += 1
@@ -757,20 +768,20 @@ struct ChatFromSimulatorMessage {
         offset += 1
         let audible = data[offset]
         offset += 1
-        
+
         // Parse position
         guard offset + 12 <= data.count else { throw ProtocolError.insufficientData }
         let position = data.readVector3(at: offset)
         offset += 12
-        
+
         // Parse message (variable length string)
         guard offset + 2 <= data.count else { throw ProtocolError.insufficientData }
         let messageLength = Int(data.readUInt16(at: offset))
         offset += 2
-        
+
         guard offset + messageLength <= data.count else { throw ProtocolError.insufficientData }
         let message = String(data: data.subdata(in: offset..<offset+messageLength), encoding: .utf8) ?? ""
-        
+
         return ChatFromSimulatorMessage(
             fromName: fromName,
             sourceID: sourceID,
@@ -827,11 +838,11 @@ struct TeleportLocationRequestMessage: OpenSimMessage {
         
         return data
     }
- }
+}
 
- // MARK: - Ping Messages (Existing)
+// MARK: - Ping Messages (Existing)
 
- struct PingCheckMessage: OpenSimMessage {
+struct PingCheckMessage: OpenSimMessage {
     let type = MessageType.pingCheck
     let needsAck = false
     
@@ -845,9 +856,9 @@ struct TeleportLocationRequestMessage: OpenSimMessage {
         
         return data
     }
- }
+}
 
- struct CompletePingCheckMessage: OpenSimMessage {
+struct CompletePingCheckMessage: OpenSimMessage {
     let type = MessageType.completePingCheck
     let needsAck = false
     
@@ -871,9 +882,9 @@ struct TeleportLocationRequestMessage: OpenSimMessage {
         let pingID = data.readUInt64(at: 0)
         return CompletePingCheckMessage(pingID: pingID)
     }
- }
+}
 
- struct LogoutRequestMessage: OpenSimMessage {
+struct LogoutRequestMessage: OpenSimMessage {
     let type = MessageType.closeCircuit
     let needsAck = true
     
@@ -893,11 +904,11 @@ struct TeleportLocationRequestMessage: OpenSimMessage {
         
         return data
     }
- }
+}
 
- // MARK: - Protocol Errors (Existing)
+// MARK: - Protocol Errors (Existing)
 
- enum ProtocolError: Error {
+enum ProtocolError: Error {
     case invalidPacketSize
     case unknownMessageType(UInt32)
     case insufficientData
@@ -918,17 +929,17 @@ struct TeleportLocationRequestMessage: OpenSimMessage {
             return "Serialization error: \(message)"
         }
     }
- }
+}
 
- // MARK: - Helper Extensions (Enhanced)
+// MARK: - Helper Extensions (Enhanced)
 
- extension UUID {
+extension UUID {
     var data: Data {
         return withUnsafeBytes(of: uuid) { Data($0) }
     }
- }
+}
 
- extension Data {
+extension Data {
     func readUInt32(at offset: Int) -> UInt32 {
         return withUnsafeBytes { bytes in
             return UInt32(bigEndian: bytes.load(fromByteOffset: offset, as: UInt32.self))
@@ -975,11 +986,11 @@ struct TeleportLocationRequestMessage: OpenSimMessage {
         let stringData = subdata(in: offset..<offset+length)
         return String(data: stringData, encoding: .utf8) ?? ""
     }
- }
+}
 
- // MARK: - NEW: Handshake State Management
+// MARK: - NEW: Handshake State Management
 
- enum HandshakeState {
+enum HandshakeState: Equatable {
     case notStarted
     case sentUseCircuitCode
     case receivedRegionHandshake
@@ -988,6 +999,23 @@ struct TeleportLocationRequestMessage: OpenSimMessage {
     case receivedAgentMovementComplete
     case handshakeComplete
     case failed(String)
+    
+    static func == (lhs: HandshakeState, rhs: HandshakeState) -> Bool {
+        switch (lhs, rhs) {
+        case (.notStarted, .notStarted),
+             (.sentUseCircuitCode, .sentUseCircuitCode),
+             (.receivedRegionHandshake, .receivedRegionHandshake),
+             (.sentRegionHandshakeReply, .sentRegionHandshakeReply),
+             (.sentCompleteAgentMovement, .sentCompleteAgentMovement),
+             (.receivedAgentMovementComplete, .receivedAgentMovementComplete),
+             (.handshakeComplete, .handshakeComplete):
+            return true
+        case (.failed(let lhsError), .failed(let rhsError)):
+            return lhsError == rhsError
+        default:
+            return false
+        }
+    }
     
     var isComplete: Bool {
         if case .handshakeComplete = self {
@@ -1017,11 +1045,11 @@ struct TeleportLocationRequestMessage: OpenSimMessage {
             return "Failed: \(error)"
         }
     }
- }
+}
 
- // MARK: - NEW: Handshake Manager
+// MARK: - FIXED: Handshake Manager (Replaces previous implementation)
 
- class OpenSimHandshakeManager {
+class OpenSimHandshakeManager {
     private(set) var state: HandshakeState = .notStarted
     private var agentID: UUID
     private var sessionID: UUID
@@ -1039,10 +1067,21 @@ struct TeleportLocationRequestMessage: OpenSimMessage {
         self.circuitCode = circuitCode
     }
     
+    // FIXED: Replace fatalError with graceful handling
     func startHandshake() -> UseCircuitCodeMessage {
+        // If handshake is already in progress, reset it and start fresh
+        if !state.isComplete && state != .notStarted {
+            print("[⚠️] Handshake already started in state: \(state.description)")
+            print("[🔄] Resetting handshake to allow fresh start")
+            reset()
+        }
+        
+        // Ensure we're in the correct state
         guard case .notStarted = state else {
-            print("[⚠️] Handshake already started, current state: \(state.description)")
-            fatalError("Handshake already in progress")
+            print("[❌] Handshake in unexpected state after reset: \(state.description)")
+            // Force reset if somehow still not in the right state
+            reset()
+            return startHandshake()
         }
         
         handshakeStartTime = Date()
@@ -1126,10 +1165,23 @@ struct TeleportLocationRequestMessage: OpenSimMessage {
         onHandshakeFailed?(error)
     }
     
+    // ENHANCED: Reset method with better logging
     func reset() {
+        let oldState = state
         state = .notStarted
         handshakeStartTime = nil
-        print("[🔄] Handshake manager reset")
+        print("[🔄] Handshake manager reset: \(oldState.description) → \(state.description)")
+    }
+    
+    // ENHANCED: Update session data for new connection
+    func updateSessionData(agentID: UUID, sessionID: UUID, circuitCode: UInt32) {
+        self.agentID = agentID
+        self.sessionID = sessionID
+        self.circuitCode = circuitCode
+        print("[🆔] Handshake session data updated:")
+        print("  AgentID: \(agentID)")
+        print("  SessionID: \(sessionID)")
+        print("  CircuitCode: \(circuitCode)")
     }
     
     private func setState(_ newState: HandshakeState) {
@@ -1163,4 +1215,27 @@ struct TeleportLocationRequestMessage: OpenSimMessage {
         
         return false
     }
- }
+    
+    // ENHANCED: Get current session info
+    func getSessionInfo() -> (agentID: UUID, sessionID: UUID, circuitCode: UInt32) {
+        return (agentID: agentID, sessionID: sessionID, circuitCode: circuitCode)
+    }
+    
+    // ENHANCED: Check if ready for next handshake step
+    func canProceedToNextStep() -> Bool {
+        switch state {
+        case .notStarted, .handshakeComplete:
+            return true
+        case .failed:
+            return true // Can restart after failure
+        default:
+            return false // In progress
+        }
+    }
+    
+    // ENHANCED: Force restart handshake (for recovery scenarios)
+    func forceRestart() {
+        print("[🔄] Force restarting handshake from state: \(state.description)")
+        reset()
+    }
+}
