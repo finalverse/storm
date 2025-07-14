@@ -110,3 +110,28 @@ final class OpenSimObjectComponent: Component {
         self.lastUpdateTime = Date()
     }
 }
+
+/// Component for tracking entity visibility and LOD state
+final class RenderStateComponent: Component {
+    var isVisible: Bool = true
+    var lodLevel: Int = 0
+    var lastRenderTime: Date = Date()
+    
+    init(isVisible: Bool = true, lodLevel: Int = 0) {
+        self.isVisible = isVisible
+        self.lodLevel = lodLevel
+    }
+}
+
+/// Component for tracking entity interaction capabilities
+final class InteractionComponent: Component {
+    var isInteractable: Bool = true
+    var canCollide: Bool = true
+    var lastInteractionTime: Date?
+    
+    init(isInteractable: Bool = true, canCollide: Bool = true) {
+        self.isInteractable = isInteractable
+        self.canCollide = canCollide
+    }
+}
+

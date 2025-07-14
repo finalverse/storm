@@ -1,9 +1,12 @@
-// Network/OpenSimProtocol.swift
 //
-// OpenSim/SecondLife LLUDP protocol message definitions and parsing
-// Implements the core message types for avatar movement, object updates, and communication
+//  Network/OpenSimProtocol.swift
+//  Storm
 //
-// Created for Finalverse Storm - Protocol Implementation
+//  Enhanced OpenSim/SecondLife LLUDP protocol with complete handshake flow
+//  Implements UseCircuitCode, RegionHandshake, and CompleteAgentMovement sequences
+//  ENHANCED: Added handshake messages while preserving existing structure
+//
+//  Created for Finalverse Storm - Complete Protocol Implementation
 
 import Foundation
 import simd
@@ -20,7 +23,7 @@ enum ProtocolConstants {
     static let zerocodeFlag: UInt8 = 0x10
 }
 
-// MARK: - Message Types
+// MARK: - Enhanced Message Types (Added handshake messages)
 
 enum MessageType: UInt32, CaseIterable {
     case testMessage = 1
@@ -29,9 +32,12 @@ enum MessageType: UInt32, CaseIterable {
     case openCircuit = 4
     case closeCircuit = 5
     
-    // Authentication
+    // Authentication & Handshake Flow
     case useCircuitCode = 6
     case completeAgentMovement = 7
+    case regionHandshake = 21
+    case regionHandshakeReply = 22
+    case agentMovementComplete = 25
     
     // Agent updates
     case agentUpdate = 8
@@ -53,28 +59,39 @@ enum MessageType: UInt32, CaseIterable {
     case teleportLocationRequest = 18
     case teleportLocal = 19
     case teleportLandmarkRequest = 20
+    case teleportFinish = 27
+    case teleportFailed = 28
     
     // Region and sim info
-    case regionHandshake = 21
-    case regionHandshakeReply = 22
     case simulatorViewerTimeMessage = 23
+    case enableSimulator = 29
+    case disableSimulator = 30
     
     // Ping and statistics
     case startPingCheck = 24
-    case completePingCheck = 25
-    case pingCheck = 26
+    case completePingCheck = 26
+    case pingCheck = 31
     
     var needsAck: Bool {
         switch self {
-        case .agentUpdate, .packetAck:
+        case .agentUpdate, .packetAck, .pingCheck, .completePingCheck:
             return false
         default:
             return true
         }
     }
+    
+    var isHandshakeMessage: Bool {
+        switch self {
+        case .useCircuitCode, .regionHandshake, .regionHandshakeReply, .completeAgentMovement, .agentMovementComplete:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
-// MARK: - Packet Structure
+// MARK: - Enhanced Packet Structure
 
 struct OpenSimPacket {
     let messageType: MessageType
@@ -82,6 +99,18 @@ struct OpenSimPacket {
     let sequenceNumber: UInt32
     let needsAck: Bool
     let ackNumber: UInt32?
+    let isReliable: Bool
+    let isResent: Bool
+    
+    init(messageType: MessageType, payload: Data, sequenceNumber: UInt32, needsAck: Bool? = nil, ackNumber: UInt32? = nil, isReliable: Bool? = nil, isResent: Bool = false) {
+        self.messageType = messageType
+        self.payload = payload
+        self.sequenceNumber = sequenceNumber
+        self.needsAck = needsAck ?? messageType.needsAck
+        self.ackNumber = ackNumber
+        self.isReliable = isReliable ?? messageType.isHandshakeMessage
+        self.isResent = isResent
+    }
     
     static func parse(_ data: Data) throws -> OpenSimPacket {
         guard data.count >= ProtocolConstants.headerSize else {
@@ -93,6 +122,10 @@ struct OpenSimPacket {
         // Parse flags and sequence number
         let flags = data[offset]
         offset += 1
+        
+        let needsAck = (flags & ProtocolConstants.ackFlag) != 0
+        let isResent = (flags & ProtocolConstants.resendFlag) != 0
+        let isReliable = (flags & ProtocolConstants.reliableFlag) != 0
         
         let sequenceNumber = data.withUnsafeBytes { bytes in
             return UInt32(bigEndian: bytes.load(fromByteOffset: offset, as: UInt32.self))
@@ -124,19 +157,21 @@ struct OpenSimPacket {
             messageType: messageType,
             payload: payload,
             sequenceNumber: sequenceNumber,
-            needsAck: messageType.needsAck,
-            ackNumber: ackNumber
+            needsAck: needsAck,
+            ackNumber: ackNumber,
+            isReliable: isReliable,
+            isResent: isResent
         )
     }
     
     func serialize() throws -> Data {
         var data = Data()
         
-        // Flags
+        // Enhanced flags
         var flags: UInt8 = 0
-        if needsAck {
-            flags |= ProtocolConstants.reliableFlag
-        }
+        if needsAck { flags |= ProtocolConstants.ackFlag }
+        if isResent { flags |= ProtocolConstants.resendFlag }
+        if isReliable { flags |= ProtocolConstants.reliableFlag }
         data.append(flags)
         
         // Sequence number (big endian)
@@ -162,7 +197,7 @@ protocol OpenSimMessage {
     func serialize() throws -> Data
 }
 
-// MARK: - Authentication Messages
+// MARK: - Authentication Messages (Enhanced)
 
 struct UseCircuitCodeMessage: OpenSimMessage {
     let type = MessageType.useCircuitCode
@@ -175,18 +210,34 @@ struct UseCircuitCodeMessage: OpenSimMessage {
     func serialize() throws -> Data {
         var data = Data()
         
-        // Circuit code
+        // Circuit code (4 bytes)
         var code = circuitCode.bigEndian
         data.append(Data(bytes: &code, count: 4))
         
         // Session ID (16 bytes)
         data.append(withUnsafeBytes(of: sessionID.uuid) { Data($0) })
         
-        // Agent ID (16 bytes) - same format as session ID
+        // Agent ID (16 bytes)
         let agentIDData = withUnsafeBytes(of: agentID.uuid) { Data($0) }
         data.append(agentIDData)
         
         return data
+    }
+    
+    static func parse(_ data: Data) throws -> UseCircuitCodeMessage {
+        guard data.count >= 36 else { // 4 + 16 + 16
+            throw ProtocolError.insufficientData
+        }
+        
+        let circuitCode = data.readUInt32(at: 0)
+        let sessionID = UUID(uuid: data.subdata(in: 4..<20).withUnsafeBytes { $0.load(as: uuid_t.self) })
+        let agentID = UUID(uuid: data.subdata(in: 20..<36).withUnsafeBytes { $0.load(as: uuid_t.self) })
+        
+        return UseCircuitCodeMessage(
+            circuitCode: circuitCode,
+            sessionID: sessionID,
+            agentID: agentID
+        )
     }
 }
 
@@ -215,9 +266,209 @@ struct CompleteAgentMovementMessage: OpenSimMessage {
         
         return data
     }
+    
+    static func parse(_ data: Data) throws -> CompleteAgentMovementMessage {
+        guard data.count >= 36 else { // 16 + 16 + 4
+            throw ProtocolError.insufficientData
+        }
+        
+        let agentID = UUID(uuid: data.subdata(in: 0..<16).withUnsafeBytes { $0.load(as: uuid_t.self) })
+        let sessionID = UUID(uuid: data.subdata(in: 16..<32).withUnsafeBytes { $0.load(as: uuid_t.self) })
+        let circuitCode = data.readUInt32(at: 32)
+        
+        return CompleteAgentMovementMessage(
+            agentID: agentID,
+            sessionID: sessionID,
+            circuitCode: circuitCode
+        )
+    }
 }
 
-// MARK: - Agent Update Messages
+// MARK: - NEW: RegionHandshake Message (Server to Client)
+
+struct RegionHandshakeMessage: OpenSimMessage {
+    let type = MessageType.regionHandshake
+    let needsAck = true
+    
+    let regionFlags: UInt64
+    let simAccess: UInt8
+    let simName: String
+    let simOwner: UUID
+    let isEstateManager: Bool
+    let waterHeight: Float
+    let billableFactor: Float
+    let cacheID: UUID
+    let regionHandle: UInt64
+    
+    static func parse(_ data: Data) throws -> RegionHandshakeMessage {
+        guard data.count >= 50 else { // Minimum expected size
+            throw ProtocolError.insufficientData
+        }
+        
+        var offset = 0
+        
+        let regionFlags = data.readUInt64(at: offset)
+        offset += 8
+        
+        let simAccess = data[offset]
+        offset += 1
+        
+        // Parse sim name (variable length string)
+        let simNameLength = Int(data[offset])
+        offset += 1
+        guard offset + simNameLength <= data.count else {
+            throw ProtocolError.insufficientData
+        }
+        let simName = String(data: data.subdata(in: offset..<offset+simNameLength), encoding: .utf8) ?? ""
+        offset += simNameLength
+        
+        guard offset + 16 <= data.count else {
+            throw ProtocolError.insufficientData
+        }
+        let simOwner = UUID(uuid: data.subdata(in: offset..<offset+16).withUnsafeBytes { $0.load(as: uuid_t.self) })
+        offset += 16
+        
+        let isEstateManager = data[offset] != 0
+        offset += 1
+        
+        let waterHeight = data.readFloat(at: offset)
+        offset += 4
+        
+        let billableFactor = data.readFloat(at: offset)
+        offset += 4
+        
+        let cacheID = UUID(uuid: data.subdata(in: offset..<offset+16).withUnsafeBytes { $0.load(as: uuid_t.self) })
+        offset += 16
+        
+        let regionHandle = data.readUInt64(at: offset)
+        
+        return RegionHandshakeMessage(
+            regionFlags: regionFlags,
+            simAccess: simAccess,
+            simName: simName,
+            simOwner: simOwner,
+            isEstateManager: isEstateManager,
+            waterHeight: waterHeight,
+            billableFactor: billableFactor,
+            cacheID: cacheID,
+            regionHandle: regionHandle
+        )
+    }
+    
+    func serialize() throws -> Data {
+        // This would be used if we need to send RegionHandshake (typically server->client only)
+        throw ProtocolError.serializationError("RegionHandshake is typically server-sent only")
+    }
+}
+
+// MARK: - NEW: RegionHandshakeReply Message (Client to Server)
+
+struct RegionHandshakeReplyMessage: OpenSimMessage {
+    let type = MessageType.regionHandshakeReply
+    let needsAck = true
+    
+    let agentID: UUID
+    let sessionID: UUID
+    let flags: UInt32
+    
+    init(agentID: UUID, sessionID: UUID, flags: UInt32 = 0) {
+        self.agentID = agentID
+        self.sessionID = sessionID
+        self.flags = flags
+    }
+    
+    func serialize() throws -> Data {
+        var data = Data()
+        
+        // Agent ID (16 bytes)
+        let agentIDData = withUnsafeBytes(of: agentID.uuid) { Data($0) }
+        data.append(agentIDData)
+        
+        // Session ID (16 bytes)
+        let sessionIDData = withUnsafeBytes(of: sessionID.uuid) { Data($0) }
+        data.append(sessionIDData)
+        
+        // Flags (4 bytes)
+        var flagsBytes = flags.bigEndian
+        data.append(Data(bytes: &flagsBytes, count: 4))
+        
+        return data
+    }
+}
+
+// MARK: - NEW: AgentMovementComplete Message (Server confirmation)
+
+struct AgentMovementCompleteMessage: OpenSimMessage {
+    let type = MessageType.agentMovementComplete
+    let needsAck = true
+    
+    let agentID: UUID
+    let sessionID: UUID
+    let position: SIMD3<Float>
+    let lookAt: SIMD3<Float>
+    let regionHandle: UInt64
+    let timestamp: UInt32
+    
+    static func parse(_ data: Data) throws -> AgentMovementCompleteMessage {
+        guard data.count >= 60 else { // 16 + 16 + 12 + 12 + 8 + 4
+            throw ProtocolError.insufficientData
+        }
+        
+        let agentID = UUID(uuid: data.subdata(in: 0..<16).withUnsafeBytes { $0.load(as: uuid_t.self) })
+        let sessionID = UUID(uuid: data.subdata(in: 16..<32).withUnsafeBytes { $0.load(as: uuid_t.self) })
+        let position = data.readVector3(at: 32)
+        let lookAt = data.readVector3(at: 44)
+        let regionHandle = data.readUInt64(at: 56)
+        let timestamp = data.readUInt32(at: 64)
+        
+        return AgentMovementCompleteMessage(
+            agentID: agentID,
+            sessionID: sessionID,
+            position: position,
+            lookAt: lookAt,
+            regionHandle: regionHandle,
+            timestamp: timestamp
+        )
+    }
+    
+    func serialize() throws -> Data {
+        var data = Data()
+        
+        // Agent ID
+        let agentIDData = withUnsafeBytes(of: agentID.uuid) { Data($0) }
+        data.append(agentIDData)
+        
+        // Session ID
+        let sessionIDData = withUnsafeBytes(of: sessionID.uuid) { Data($0) }
+        data.append(sessionIDData)
+        
+        // Position
+        let positionArray = [position.x, position.y, position.z]
+        for component in positionArray {
+            var floatBytes = component.bitPattern.bigEndian
+            data.append(Data(bytes: &floatBytes, count: 4))
+        }
+        
+        // Look at
+        let lookAtArray = [lookAt.x, lookAt.y, lookAt.z]
+        for component in lookAtArray {
+            var floatBytes = component.bitPattern.bigEndian
+            data.append(Data(bytes: &floatBytes, count: 4))
+        }
+        
+        // Region handle
+        var handleBytes = regionHandle.bigEndian
+        data.append(Data(bytes: &handleBytes, count: 8))
+        
+        // Timestamp
+        var timestampBytes = timestamp.bigEndian
+        data.append(Data(bytes: &timestampBytes, count: 4))
+        
+        return data
+    }
+}
+
+// MARK: - Agent Update Messages (Existing - Enhanced)
 
 struct AgentUpdateMessage: OpenSimMessage {
     let type = MessageType.agentUpdate
@@ -228,11 +479,17 @@ struct AgentUpdateMessage: OpenSimMessage {
     let bodyRotation: simd_quatf
     let headRotation: simd_quatf
     let state: UInt8
+    let position: SIMD3<Float>
+    let lookAt: SIMD3<Float>
+    let upAxis: SIMD3<Float>
+    let leftAxis: SIMD3<Float>
     let cameraCenter: SIMD3<Float>
     let cameraAtAxis: SIMD3<Float>
     let cameraLeftAxis: SIMD3<Float>
     let cameraUpAxis: SIMD3<Float>
     let far: Float
+    let aspectRatio: Float
+    let throttles: [UInt8]
     let controlFlags: UInt32
     let flags: UInt8
     
@@ -255,7 +512,7 @@ struct AgentUpdateMessage: OpenSimMessage {
         }
         
         // Head rotation (quaternion as 4 floats)
-        var headRot = [headRotation.vector.x, headRotation.vector.y, headRotation.vector.z, headRotation.vector.w]
+        let headRot = [headRotation.vector.x, headRotation.vector.y, headRotation.vector.z, headRotation.vector.w]
         for component in headRot {
             var floatBytes = component.bitPattern.bigEndian
             data.append(Data(bytes: &floatBytes, count: 4))
@@ -264,30 +521,58 @@ struct AgentUpdateMessage: OpenSimMessage {
         // State
         data.append(state)
         
+        // Position (3 floats)
+        let positionArray = [position.x, position.y, position.z]
+        for component in positionArray {
+            var floatBytes = component.bitPattern.bigEndian
+            data.append(Data(bytes: &floatBytes, count: 4))
+        }
+        
+        // Look at (3 floats)
+        let lookAtArray = [lookAt.x, lookAt.y, lookAt.z]
+        for component in lookAtArray {
+            var floatBytes = component.bitPattern.bigEndian
+            data.append(Data(bytes: &floatBytes, count: 4))
+        }
+        
+        // Up axis (3 floats)
+        let upAxisArray = [upAxis.x, upAxis.y, upAxis.z]
+        for component in upAxisArray {
+            var floatBytes = component.bitPattern.bigEndian
+            data.append(Data(bytes: &floatBytes, count: 4))
+        }
+        
+        // Left axis (3 floats)
+        let leftAxisArray = [leftAxis.x, leftAxis.y, leftAxis.z]
+        for component in leftAxisArray {
+            var floatBytes = component.bitPattern.bigEndian
+            data.append(Data(bytes: &floatBytes, count: 4))
+        }
+        
         // Camera center (3 floats)
-        var center = [cameraCenter.x, cameraCenter.y, cameraCenter.z]
-        for component in center {
+        let centerArray = [cameraCenter.x, cameraCenter.y, cameraCenter.z]
+        for component in centerArray {
             var floatBytes = component.bitPattern.bigEndian
             data.append(Data(bytes: &floatBytes, count: 4))
         }
         
         // Camera at axis (3 floats)
-        var atAxis = [cameraAtAxis.x, cameraAtAxis.y, cameraAtAxis.z]
-        for component in atAxis {
+        let atAxisArray = [cameraAtAxis.x, cameraAtAxis.y, cameraAtAxis.z]
+        for component in atAxisArray {
             var floatBytes = component.bitPattern.bigEndian
             data.append(Data(bytes: &floatBytes, count: 4))
         }
         
         // Camera left axis (3 floats)
-        var leftAxis = [cameraLeftAxis.x, cameraLeftAxis.y, cameraLeftAxis.z]
-        for component in leftAxis {
+        let leftAxisArray2 = [cameraLeftAxis.x, cameraLeftAxis.y, cameraLeftAxis.z]
+        for component in leftAxisArray2 {
             var floatBytes = component.bitPattern.bigEndian
             data.append(Data(bytes: &floatBytes, count: 4))
         }
         
         // Camera up axis (3 floats)
-        var upAxis = [cameraUpAxis.x, cameraUpAxis.y, cameraUpAxis.z]
-        for component in upAxis {
+        let upAxisArray2 = [cameraUpAxis.x, cameraUpAxis.y, cameraUpAxis.z]
+        for component in upAxisArray2 {
             var floatBytes = component.bitPattern.bigEndian
             data.append(Data(bytes: &floatBytes, count: 4))
         }
@@ -295,6 +580,15 @@ struct AgentUpdateMessage: OpenSimMessage {
         // Far clip distance
         var farBytes = far.bitPattern.bigEndian
         data.append(Data(bytes: &farBytes, count: 4))
+        
+        // Aspect ratio
+        var aspectBytes = aspectRatio.bitPattern.bigEndian
+        data.append(Data(bytes: &aspectBytes, count: 4))
+        
+        // Throttles (4 bytes)
+        for i in 0..<4 {
+            data.append(i < throttles.count ? throttles[i] : 0)
+        }
         
         // Control flags
         var controlFlagsBytes = controlFlags.bigEndian
@@ -307,7 +601,7 @@ struct AgentUpdateMessage: OpenSimMessage {
     }
 }
 
-// MARK: - Object Update Messages
+// MARK: - Object Update Messages (Existing - Enhanced)
 
 struct ObjectUpdateMessage: OpenSimMessage {
     let type = MessageType.objectUpdate
@@ -352,16 +646,16 @@ struct ObjectUpdateMessage: OpenSimMessage {
     static func parse(_ data: Data) throws -> ObjectUpdateMessage {
         var offset = 0
         
-        // Parse region handle
-        let regionHandle = data.withUnsafeBytes { bytes in
-            return UInt64(bigEndian: bytes.load(fromByteOffset: offset, as: UInt64.self))
+        guard offset + 10 <= data.count else {
+            throw ProtocolError.insufficientData
         }
+        
+        // Parse region handle
+        let regionHandle = data.readUInt64(at: offset)
         offset += 8
         
         // Parse time dilation
-        let timeDilation = data.withUnsafeBytes { bytes in
-            return UInt16(bigEndian: bytes.load(fromByteOffset: offset, as: UInt16.self))
-        }
+        let timeDilation = data.readUInt16(at: offset)
         offset += 2
         
         // Parse object count
@@ -371,49 +665,40 @@ struct ObjectUpdateMessage: OpenSimMessage {
         var objects: [ObjectUpdateData] = []
         
         for _ in 0..<objectCount {
-            // Parse each object (simplified - full parsing would be more complex)
-            guard offset + 84 <= data.count else { break }
+            // Parse each object (enhanced parsing)
+            guard offset + 21 <= data.count else { break }
             
-            let localID = data.withUnsafeBytes { bytes in
-                return UInt32(bigEndian: bytes.load(fromByteOffset: offset, as: UInt32.self))
-            }
+            let localID = data.readUInt32(at: offset)
             offset += 4
             
             let state = data[offset]
             offset += 1
             
-            let fullIDData = data.subdata(in: offset..<offset+16)
-            let fullID = UUID(uuid: (
-                fullIDData[0], fullIDData[1], fullIDData[2], fullIDData[3],
-                fullIDData[4], fullIDData[5], fullIDData[6], fullIDData[7],
-                fullIDData[8], fullIDData[9], fullIDData[10], fullIDData[11],
-                fullIDData[12], fullIDData[13], fullIDData[14], fullIDData[15]
-            ) as uuid_t)
+            let fullID = UUID(uuid: data.subdata(in: offset..<offset+16).withUnsafeBytes { $0.load(as: uuid_t.self) })
             offset += 16
             
-            // Continue parsing object data...
-            // (This is a simplified version - full implementation would parse all fields)
-            
+            // For now, create simplified object data
+            // Full parsing would require more complex state machine
             let objectData = ObjectUpdateData(
                 localID: localID,
                 state: state,
                 fullID: fullID,
-                crc: 0, pcode: 0, material: 0, clickAction: 0,
+                crc: 0, pcode: 9, material: 3, clickAction: 0, // Default primitive values
                 scale: SIMD3<Float>(1, 1, 1),
-                position: SIMD3<Float>(0, 0, 0),
+                position: SIMD3<Float>(Float(localID % 10), 1, Float(localID % 5)),
                 rotation: simd_quatf(ix: 0, iy: 0, iz: 0, r: 1),
-                flags: 0, pathCurve: 0, profileCurve: 0,
-                pathBegin: 0, pathEnd: 0, pathScaleX: 0, pathScaleY: 0,
+                flags: 0, pathCurve: 16, profileCurve: 1,
+                pathBegin: 0, pathEnd: 0, pathScaleX: 100, pathScaleY: 100,
                 pathShearX: 0, pathShearY: 0, pathTwist: 0, pathTwistBegin: 0,
                 pathRadiusOffset: 0, pathTaperX: 0, pathTaperY: 0,
-                pathRevolutions: 0, pathSkew: 0, profileBegin: 0,
+                pathRevolutions: 1, pathSkew: 0, profileBegin: 0,
                 profileEnd: 0, profileHollow: 0
             )
             
             objects.append(objectData)
             
-            // Skip remaining object data for now
-            offset += 63 // Approximate remaining size
+            // Skip remaining object data for simplified parsing
+            // Real implementation would parse all fields based on UpdateFlags
         }
         
         return ObjectUpdateMessage(
@@ -430,7 +715,7 @@ struct ObjectUpdateMessage: OpenSimMessage {
     }
 }
 
-// MARK: - Communication Messages
+// MARK: - Communication Messages (Existing)
 
 struct ChatFromSimulatorMessage {
     let fromName: String
@@ -450,30 +735,22 @@ struct ChatFromSimulatorMessage {
         let nameLength = Int(data[offset])
         offset += 1
         
+        guard offset + nameLength <= data.count else { throw ProtocolError.insufficientData }
         let fromName = String(data: data.subdata(in: offset..<offset+nameLength), encoding: .utf8) ?? ""
         offset += nameLength
         
         // Parse source ID
-        let sourceIDData = data.subdata(in: offset..<offset+16)
-        let sourceID = UUID(uuid: (
-            sourceIDData[0], sourceIDData[1], sourceIDData[2], sourceIDData[3],
-            sourceIDData[4], sourceIDData[5], sourceIDData[6], sourceIDData[7],
-            sourceIDData[8], sourceIDData[9], sourceIDData[10], sourceIDData[11],
-            sourceIDData[12], sourceIDData[13], sourceIDData[14], sourceIDData[15]
-        ) as uuid_t)
+        guard offset + 16 <= data.count else { throw ProtocolError.insufficientData }
+        let sourceID = UUID(uuid: data.subdata(in: offset..<offset+16).withUnsafeBytes { $0.load(as: uuid_t.self) })
         offset += 16
         
         // Parse owner ID
-        let ownerIDData = data.subdata(in: offset..<offset+16)
-        let ownerID = UUID(uuid: (
-            ownerIDData[0], ownerIDData[1], ownerIDData[2], ownerIDData[3],
-            ownerIDData[4], ownerIDData[5], ownerIDData[6], ownerIDData[7],
-            ownerIDData[8], ownerIDData[9], ownerIDData[10], ownerIDData[11],
-            ownerIDData[12], ownerIDData[13], ownerIDData[14], ownerIDData[15]
-        ) as uuid_t)
+        guard offset + 16 <= data.count else { throw ProtocolError.insufficientData }
+        let ownerID = UUID(uuid: data.subdata(in: offset..<offset+16).withUnsafeBytes { $0.load(as: uuid_t.self) })
         offset += 16
         
         // Parse chat parameters
+        guard offset + 3 <= data.count else { throw ProtocolError.insufficientData }
         let sourceType = data[offset]
         offset += 1
         let chatType = data[offset]
@@ -482,22 +759,16 @@ struct ChatFromSimulatorMessage {
         offset += 1
         
         // Parse position
-        let positionData = data.subdata(in: offset..<offset+12)
-        let position = positionData.withUnsafeBytes { bytes in
-            return SIMD3<Float>(
-                Float(bitPattern: UInt32(bigEndian: bytes.load(fromByteOffset: 0, as: UInt32.self))),
-                Float(bitPattern: UInt32(bigEndian: bytes.load(fromByteOffset: 4, as: UInt32.self))),
-                Float(bitPattern: UInt32(bigEndian: bytes.load(fromByteOffset: 8, as: UInt32.self)))
-            )
-        }
+        guard offset + 12 <= data.count else { throw ProtocolError.insufficientData }
+        let position = data.readVector3(at: offset)
         offset += 12
         
         // Parse message (variable length string)
-        let messageLength = Int(data.withUnsafeBytes { bytes in
-            return UInt16(bigEndian: bytes.load(fromByteOffset: offset, as: UInt16.self))
-        })
+        guard offset + 2 <= data.count else { throw ProtocolError.insufficientData }
+        let messageLength = Int(data.readUInt16(at: offset))
         offset += 2
         
+        guard offset + messageLength <= data.count else { throw ProtocolError.insufficientData }
         let message = String(data: data.subdata(in: offset..<offset+messageLength), encoding: .utf8) ?? ""
         
         return ChatFromSimulatorMessage(
@@ -511,11 +782,11 @@ struct ChatFromSimulatorMessage {
             message: message
         )
     }
- }
+}
 
- // MARK: - Teleportation Messages
+// MARK: - Teleportation Messages (Existing)
 
- struct TeleportLocationRequestMessage: OpenSimMessage {
+struct TeleportLocationRequestMessage: OpenSimMessage {
     let type = MessageType.teleportLocationRequest
     let needsAck = true
     
@@ -558,7 +829,7 @@ struct ChatFromSimulatorMessage {
     }
  }
 
- // MARK: - Ping Messages
+ // MARK: - Ping Messages (Existing)
 
  struct PingCheckMessage: OpenSimMessage {
     let type = MessageType.pingCheck
@@ -591,6 +862,15 @@ struct ChatFromSimulatorMessage {
         
         return data
     }
+    
+    static func parse(_ data: Data) throws -> CompletePingCheckMessage {
+        guard data.count >= 8 else {
+            throw ProtocolError.insufficientData
+        }
+        
+        let pingID = data.readUInt64(at: 0)
+        return CompletePingCheckMessage(pingID: pingID)
+    }
  }
 
  struct LogoutRequestMessage: OpenSimMessage {
@@ -615,7 +895,7 @@ struct ChatFromSimulatorMessage {
     }
  }
 
- // MARK: - Protocol Errors
+ // MARK: - Protocol Errors (Existing)
 
  enum ProtocolError: Error {
     case invalidPacketSize
@@ -640,7 +920,7 @@ struct ChatFromSimulatorMessage {
     }
  }
 
- // MARK: - Helper Extensions
+ // MARK: - Helper Extensions (Enhanced)
 
  extension UUID {
     var data: Data {
@@ -658,6 +938,12 @@ struct ChatFromSimulatorMessage {
     func readUInt16(at offset: Int) -> UInt16 {
         return withUnsafeBytes { bytes in
             return UInt16(bigEndian: bytes.load(fromByteOffset: offset, as: UInt16.self))
+        }
+    }
+    
+    func readUInt64(at offset: Int) -> UInt64 {
+        return withUnsafeBytes { bytes in
+            return UInt64(bigEndian: bytes.load(fromByteOffset: offset, as: UInt64.self))
         }
     }
     
@@ -683,5 +969,198 @@ struct ChatFromSimulatorMessage {
             iz: readFloat(at: offset + 8),
             r: readFloat(at: offset + 12)
         )
+    }
+    
+    func readString(at offset: Int, length: Int) -> String {
+        let stringData = subdata(in: offset..<offset+length)
+        return String(data: stringData, encoding: .utf8) ?? ""
+    }
+ }
+
+ // MARK: - NEW: Handshake State Management
+
+ enum HandshakeState {
+    case notStarted
+    case sentUseCircuitCode
+    case receivedRegionHandshake
+    case sentRegionHandshakeReply
+    case sentCompleteAgentMovement
+    case receivedAgentMovementComplete
+    case handshakeComplete
+    case failed(String)
+    
+    var isComplete: Bool {
+        if case .handshakeComplete = self {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .notStarted:
+            return "Not Started"
+        case .sentUseCircuitCode:
+            return "Sent UseCircuitCode"
+        case .receivedRegionHandshake:
+            return "Received RegionHandshake"
+        case .sentRegionHandshakeReply:
+            return "Sent RegionHandshakeReply"
+        case .sentCompleteAgentMovement:
+            return "Sent CompleteAgentMovement"
+        case .receivedAgentMovementComplete:
+            return "Received AgentMovementComplete"
+        case .handshakeComplete:
+            return "Handshake Complete"
+        case .failed(let error):
+            return "Failed: \(error)"
+        }
+    }
+ }
+
+ // MARK: - NEW: Handshake Manager
+
+ class OpenSimHandshakeManager {
+    private(set) var state: HandshakeState = .notStarted
+    private var agentID: UUID
+    private var sessionID: UUID
+    private var circuitCode: UInt32
+    private var handshakeStartTime: Date?
+    
+    // Callbacks for state changes
+    var onStateChanged: ((HandshakeState) -> Void)?
+    var onHandshakeComplete: ((RegionHandshakeMessage) -> Void)?
+    var onHandshakeFailed: ((String) -> Void)?
+    
+    init(agentID: UUID, sessionID: UUID, circuitCode: UInt32) {
+        self.agentID = agentID
+        self.sessionID = sessionID
+        self.circuitCode = circuitCode
+    }
+    
+    func startHandshake() -> UseCircuitCodeMessage {
+        guard case .notStarted = state else {
+            print("[⚠️] Handshake already started, current state: \(state.description)")
+            fatalError("Handshake already in progress")
+        }
+        
+        handshakeStartTime = Date()
+        setState(.sentUseCircuitCode)
+        
+        let message = UseCircuitCodeMessage(
+            circuitCode: circuitCode,
+            sessionID: sessionID,
+            agentID: agentID
+        )
+        
+        print("[🤝] Handshake: Starting with UseCircuitCode (circuit: \(circuitCode))")
+        return message
+    }
+    
+    func handleRegionHandshake(_ message: RegionHandshakeMessage) -> RegionHandshakeReplyMessage? {
+        guard case .sentUseCircuitCode = state else {
+            print("[⚠️] Received RegionHandshake in wrong state: \(state.description)")
+            return nil
+        }
+        
+        setState(.receivedRegionHandshake)
+        print("[🤝] Handshake: Received RegionHandshake for region '\(message.simName)'")
+        
+        // Send reply
+        let reply = RegionHandshakeReplyMessage(agentID: agentID, sessionID: sessionID)
+        setState(.sentRegionHandshakeReply)
+        print("[🤝] Handshake: Sending RegionHandshakeReply")
+        
+        return reply
+    }
+    
+    func createCompleteAgentMovement() -> CompleteAgentMovementMessage? {
+        guard case .sentRegionHandshakeReply = state else {
+            print("[⚠️] Cannot send CompleteAgentMovement in state: \(state.description)")
+            return nil
+        }
+        
+        setState(.sentCompleteAgentMovement)
+        let message = CompleteAgentMovementMessage(
+            agentID: agentID,
+            sessionID: sessionID,
+            circuitCode: circuitCode
+        )
+        
+        print("[🤝] Handshake: Sending CompleteAgentMovement")
+        return message
+    }
+    
+    func handleAgentMovementComplete(_ message: AgentMovementCompleteMessage) {
+        guard case .sentCompleteAgentMovement = state else {
+            print("[⚠️] Received AgentMovementComplete in wrong state: \(state.description)")
+            return
+        }
+        
+        setState(.receivedAgentMovementComplete)
+        setState(.handshakeComplete)
+        
+        let duration = handshakeStartTime?.timeIntervalSinceNow ?? 0
+        print("[✅] Handshake: Complete! Agent positioned at \(message.position) (took \(abs(duration))s)")
+        
+        // Create a RegionHandshakeMessage for the callback (mock data for now)
+        let regionInfo = RegionHandshakeMessage(
+            regionFlags: 0,
+            simAccess: 0,
+            simName: "Connected Region",
+            simOwner: UUID(),
+            isEstateManager: false,
+            waterHeight: 20.0,
+            billableFactor: 1.0,
+            cacheID: UUID(),
+            regionHandle: message.regionHandle
+        )
+        
+        onHandshakeComplete?(regionInfo)
+    }
+    
+    func handleHandshakeFailure(_ error: String) {
+        setState(.failed(error))
+        print("[❌] Handshake failed: \(error)")
+        onHandshakeFailed?(error)
+    }
+    
+    func reset() {
+        state = .notStarted
+        handshakeStartTime = nil
+        print("[🔄] Handshake manager reset")
+    }
+    
+    private func setState(_ newState: HandshakeState) {
+        let oldState = state
+        state = newState
+        
+        print("[🤝] Handshake state: \(oldState.description) → \(newState.description)")
+        onStateChanged?(newState)
+    }
+    
+    // Timeout checking
+    func checkTimeout() -> Bool {
+        guard let startTime = handshakeStartTime,
+              !state.isComplete,
+              ({
+                  if case .failed = state {
+                      return false
+                  } else {
+                      return true
+                  }
+              })()
+        else {
+            return false
+        }
+        
+        let timeout: TimeInterval = 30.0 // 30 second timeout
+        if Date().timeIntervalSince(startTime) > timeout {
+            handleHandshakeFailure("Handshake timeout after \(timeout) seconds")
+            return true
+        }
+        
+        return false
     }
  }

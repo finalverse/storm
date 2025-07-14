@@ -32,6 +32,7 @@
 		B4838C372E23F47F007276FD /* CockpitViewShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C362E23F47F007276FD /* CockpitViewShared.swift */; };
 		B4838C432E23F937007276FD /* CockpitView-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C422E23F937007276FD /* CockpitView-iOS.swift */; };
 		B4838C452E23F953007276FD /* CockpitView-macOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C442E23F953007276FD /* CockpitView-macOS.swift */; };
+		B4838C472E243813007276FD /* OSMessageRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C462E243813007276FD /* OSMessageRouter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,6 +66,7 @@
 		B4838C362E23F47F007276FD /* CockpitViewShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CockpitViewShared.swift; sourceTree = "<group>"; };
 		B4838C422E23F937007276FD /* CockpitView-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CockpitView-iOS.swift"; sourceTree = "<group>"; };
 		B4838C442E23F953007276FD /* CockpitView-macOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CockpitView-macOS.swift"; sourceTree = "<group>"; };
+		B4838C462E243813007276FD /* OSMessageRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSMessageRouter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -185,6 +187,7 @@
 			children = (
 				B4838C222E2370D5007276FD /* OSConnectManager.swift */,
 				B4838C262E2371AA007276FD /* OpenSimProtocol.swift */,
+				B4838C462E243813007276FD /* OSMessageRouter.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -284,6 +287,7 @@
 				B4838C452E23F953007276FD /* CockpitView-macOS.swift in Sources */,
 				B4838B862E2217FB007276FD /* InputController.swift in Sources */,
 				B4838C232E2370D5007276FD /* OSConnectManager.swift in Sources */,
+				B4838C472E243813007276FD /* OSMessageRouter.swift in Sources */,
 				B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */,
 				B4838B892E2262E4007276FD /* RendererService.swift in Sources */,
 			);
