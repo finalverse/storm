@@ -1,5 +1,33 @@
-module RustStorm [system] {
+//
+// RustCore/module.modulemap
+// Storm RustCore Module Map
+//
+// Defines the C interface for Swift-Rust FFI integration,
+// enabling seamless access to RustCore from Swift code.
+//
+
+module StormCore {
     header "storm.h"
-    link "storm"
+    link "storm_core"
+    export *
+}
+
+module StormCore.Events {
+    header "storm_events.h"
+    export *
+}
+
+module StormCore.AI {
+    header "storm_ai.h"
+    export *
+}
+
+module StormCore.State {
+    header "storm_state.h"
+    export *
+}
+
+module StormCore.Protocols {
+    header "storm_protocols.h"
     export *
 }
