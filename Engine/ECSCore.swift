@@ -75,17 +75,17 @@ protocol ECSStepSystem {
 final class ECSCore {
     private let world = ECSWorld()
     private var systems: [ECSStepSystem] = []
-
+    
     func registerSystem(_ system: ECSStepSystem) {
         systems.append(system)
     }
-
+    
     func tick(deltaTime: TimeInterval) {
         for system in systems {
             system.update(world: world, deltaTime: deltaTime)
         }
     }
-
+    
     // For external access (e.g., plugins)
     func getWorld() -> ECSWorld {
         return world
@@ -103,4 +103,32 @@ final class ECSCore {
         let world = getWorld()
         return world.hasComponent(SpinComponent.self, for: entityID)
     }
+    
+    /// Returns all entities that have both given component types.
+    func getEntitiesWithComponents<T: Component, U: Component>(_ type1: T.Type, _ type2: U.Type) -> [EntityID] {
+        let world = getWorld()
+        return world.entities(with: T.self).compactMap { (entityID, _) in
+            if world.hasComponent(U.self, for: entityID) {
+                return entityID
+            }
+            return nil
+        }
+    }
+    
+    /// Returns all entities that have all given component types (variadic form).
+    func getEntitiesWithComponents(_ types: [any Component.Type]) -> [EntityID] {
+        let world = getWorld()
+        return world.entities(with: PositionComponent.self).map { $0.0 }.filter { entityID in
+            types.allSatisfy { type in
+                world.hasComponent(type, for: entityID)
+            }
+        }
+    }
+    
+    /// Retrieves a component of a specific type for an entity.
+    func getComponent<T: Component>(ofType type: T.Type, for entityID: EntityID) -> T? {
+        let world = getWorld()
+        return world.getComponent(ofType: type, from: entityID)
+    }
+    
 }

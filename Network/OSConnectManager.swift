@@ -195,7 +195,6 @@ class OSConnectManager: ObservableObject {
         let services = [
             ("ECS", systemRegistry.ecs != nil),
             ("UI", systemRegistry.ui != nil),
-            ("Router", systemRegistry.router != nil),
             ("Renderer", systemRegistry.resolve("renderer") != nil),
             ("OpenSim Bridge", systemRegistry.getOpenSimBridge() != nil)
         ]

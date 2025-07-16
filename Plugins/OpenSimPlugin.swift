@@ -131,21 +131,21 @@ final class OpenSimPlugin: StormPlugin {
     }
     
     private func setupUIIntegration(_ registry: SystemRegistry) {
-        guard let router = registry.router else {
-            print("[⚠️] UIScriptRouter not available")
+        guard let composer = registry.getUI() else {
+            print("[⚠️] UIComposer not available")
             return
         }
         
         // Register command namespaces with proper routing
-        router.registerHandler(namespace: "opensim") { [weak self] command, args in
+        composer.registerActionHandler(namespace: "opensim") { [weak self] command, args in
             self?.uiService.handleOpenSimCommand(command: command, args: args)
         }
         
-        router.registerHandler(namespace: "scene") { [weak self] command, args in
+        composer.registerActionHandler(namespace: "scene") { [weak self] command, args in
             self?.uiService.handleSceneCommand(command: command, args: args)
         }
         
-        router.registerHandler(namespace: "avatar") { [weak self] command, args in
+        composer.registerActionHandler(namespace: "avatar") { [weak self] command, args in
             self?.uiService.handleAvatarCommand(command: command, args: args)
         }
         
@@ -499,29 +499,5 @@ class OpenSimHealthService {
             "ecsBridge": ecsBridge != nil,
             "connection": connectManager?.isConnected ?? false
         ]
-    }
-}
-
-// MARK: - Updated PluginHost Extension
-
-extension PluginHost {
-    
-    /// Enhanced plugin initialization - CLEAN VERSION
-    func initializePlugins(kernel: Kernel, registry: SystemRegistry) {
-        print("[🔌] PluginHost initializing plugins...")
-        
-        // Core plugins
-        let logPlugin = HelloPlugin()
-        register(plugin: logPlugin, into: kernel, registry: registry)
-        
-        // Consolidated OpenSim plugin (replaces multiple overlapping plugins)
-        let openSimPlugin = OpenSimPlugin()
-        register(plugin: openSimPlugin, into: kernel, registry: registry)
-        
-        // Enhanced Local World Plugin
-        let localWorldPlugin = LocalWorldPlugin()
-        register(plugin: localWorldPlugin, into: kernel, registry: registry)
-        
-        print("[✅] Clean plugin suite initialized")
     }
 }

@@ -27,9 +27,20 @@ final class PluginHost {
     /// Initialize and register all plugins (demo: only HelloPlugin)
     func initializePlugins(kernel: Kernel, registry: SystemRegistry) {
         print("[🔌] PluginHost initializing plugins...")
-
+        
+        // Core plugins
         let logPlugin = HelloPlugin()
         register(plugin: logPlugin, into: kernel, registry: registry)
+        
+        // Consolidated OpenSim plugin (replaces multiple overlapping plugins)
+        let openSimPlugin = OpenSimPlugin()
+        register(plugin: openSimPlugin, into: kernel, registry: registry)
+        
+        // Enhanced Local World Plugin
+        let localWorldPlugin = LocalWorldPlugin()
+        register(plugin: localWorldPlugin, into: kernel, registry: registry)
+        
+        print("[✅] Clean plugin suite initialized")
     }
 
     /// Registers plugin and links it to the kernel tick loop

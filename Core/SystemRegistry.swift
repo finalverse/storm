@@ -2,327 +2,163 @@
 //  Core/SystemRegistry.swift
 //  Storm
 //
-//  Enhanced container for shared services (ECS, UI, OpenSim, Audio, etc.)
-//  ENHANCED: Added OpenSim integration and improved service management
+//  Central service registry and dependency injection container
+//  Manages all system services and their dependencies
+//  UPDATED: Removed UIScriptRouter dependency, routing now handled by UIComposer
 //
-//  Created by Wenyan Qin on 2025-07-09.
+//  Created by Wenyan Qin on 2025-07-15.
 //
 
 import Foundation
+import SwiftUI
 
-/// Enhanced container for shared services with OpenSim integration support
-final class SystemRegistry {
+// MARK: - ServiceMetadata
 
-    // MARK: - Core Services
-    var ecs: ECSCore? = nil
-    var ui: UIComposer? = nil
-    var router: UIScriptRouter? = nil
+struct ServiceMetadata {
+    let name: String
+    let type: Any.Type
+    let dependencies: [String]
+    let priority: Int
     
-    // MARK: - OpenSim Integration Services
-    var openSimBridge: OpenSimECSBridge? = nil
-    var openSimConnection: OSConnectManager? = nil
-    var messageRouter: OSMessageRouter? = nil
-    
-    // MARK: - Rendering Services
-    var renderer: RendererService? = nil
-    
-    // MARK: - Future Services (Commented for now)
-    //var agentService: EchoAgentService? = nil
-    //var llm: LLMBroker? = nil
-    //var audio: AudioEngine? = nil
+    init<T>(name: String, type: T.Type, dependencies: [String] = [], priority: Int = 100) {
+        self.name = name
+        self.type = type
+        self.dependencies = dependencies
+        self.priority = priority
+    }
+}
 
-    // MARK: - Service Metadata
-    var metadata: [String: Any] = [:]
+// MARK: - ServiceHealth
+
+struct ServiceHealth {
+    let isHealthy: Bool
+    let issues: [String]
+    let lastChecked: Date
     
-    // MARK: - Service State
-    private var isInitialized = false
+    init(isHealthy: Bool, issues: [String] = []) {
+        self.isHealthy = isHealthy
+        self.issues = issues
+        self.lastChecked = Date()
+    }
+}
+
+// MARK: - SystemRegistry
+
+final class SystemRegistry: ObservableObject {
+    
+    // MARK: - Core Services (Always Available)
+    
+    private(set) var ecs: ECSCore?
+    private(set) var ui: UIComposer?
+    
+    // MARK: - Optional Services (Platform/Feature Dependent)
+    
+    private(set) var renderer: RendererService?
+    private(set) var openSimBridge: OpenSimECSBridge?
+    private(set) var openSimConnection: OSConnectManager?
+    private(set) var messageRouter: OSMessageRouter?
+    
+    // MARK: - Service Management
+    
+    private var metadata: [String: Any] = [:]
+    private var serviceMetadata: [String: ServiceMetadata] = [:]
     private var initializationOrder: [String] = []
+    private var isInitialized = false
+    private var isDebugMode = false
+    
+    // MARK: - Singleton
+    
+    static let shared = SystemRegistry()
     
     init() {
-        setupServiceDependencies()
+        print("[🔧] SystemRegistry initialized")
     }
     
     // MARK: - Service Registration
     
-    func register<T>(_ service: T, for key: String) {
-        metadata[key] = service
-        initializationOrder.append(key)
+    func register<T>(_ service: T, for key: String, metadata: ServiceMetadata? = nil) {
+        self.metadata[key] = service
         
-        // Also set typed properties for easy access
-        switch key {
-        case "ecs":
-            ecs = service as? ECSCore
-        case "ui":
-            ui = service as? UIComposer
-        case "router":
-            router = service as? UIScriptRouter
-        case "openSimBridge":
-            openSimBridge = service as? OpenSimECSBridge
-        case "openSimConnection":
-            openSimConnection = service as? OSConnectManager
-        case "messageRouter":
-            messageRouter = service as? OSMessageRouter
-        case "renderer":
-            renderer = service as? RendererService
-        default:
-            break
+        if let meta = metadata {
+            serviceMetadata[key] = meta
         }
         
-        print("[🔧] Registered service '\(key)': \(type(of: service))")
+        if !initializationOrder.contains(key) {
+            initializationOrder.append(key)
+        }
+        
+        // Update specific service references for type safety
+        updateServiceReferences(key: key, service: service)
+        
+        print("[✅] Registered service: \(key) (\(type(of: service)))")
     }
     
-    // REPLACE the existing resolve methods with these improved versions:
-
+    /// Special registration method for ECS (foundation service)
+    func registerECS(_ ecsService: ECSCore) {
+        register(ecsService, for: "ecs")
+        print("[🏗️] ECS Core registered as foundation service")
+    }
+    
+    /// Special registration method for Renderer
+    func registerRenderer(_ rendererService: RendererService) {
+        register(rendererService, for: "renderer")
+        
+        // Initialize OpenSim services now that renderer is available
+        if !hasOpenSimSupport() {
+            enableOpenSimSupport()
+        }
+        
+        print("[🎨] Renderer registered - OpenSim services available")
+    }
+    
+    private func updateServiceReferences<T>(key: String, service: T) {
+        switch key {
+        case "ecs":
+            if let ecsService = service as? ECSCore {
+                self.ecs = ecsService
+            }
+        case "ui":
+            if let uiService = service as? UIComposer {
+                self.ui = uiService
+            }
+        case "renderer":
+            if let rendererService = service as? RendererService {
+                self.renderer = rendererService
+            }
+        case "openSimBridge":
+            if let bridgeService = service as? OpenSimECSBridge {
+                self.openSimBridge = bridgeService
+            }
+        case "openSimConnection":
+            if let connectionService = service as? OSConnectManager {
+                self.openSimConnection = connectionService
+            }
+        case "messageRouter":
+            if let routerService = service as? OSMessageRouter {
+                self.messageRouter = routerService
+            }
+        default:
+            // Store in metadata but don't maintain specific reference
+            break
+        }
+    }
+    
+    // MARK: - Service Resolution
+    
     func resolve<T>(_ key: String) -> T? {
         return metadata[key] as? T
     }
-
-    func get<T>(_ key: String) -> T? {
-        return resolve(key)
-    }
-
-    // ADD: Type-safe convenience methods for common services
-    func getOpenSimBridge() -> OpenSimECSBridge? {
-        return resolve("openSimBridge")
-    }
-
-    func getOpenSimConnection() -> OSConnectManager? {
-        return resolve("openSimConnection")
-    }
-
-    func getMessageRouter() -> OSMessageRouter? {
-        return resolve("messageRouter")
-    }
-
-    func getECS() -> ECSCore? {
-        return resolve("ecs")
-    }
-
-    func getRenderer() -> RendererService? {
-        return resolve("renderer")
-    }
-
-    func getUIComposer() -> UIComposer? {
-        return resolve("ui")
-    }
-
-    func getUIRouter() -> UIScriptRouter? {
-        return resolve("router")
-    }
     
-    // MARK: - Service Dependencies and Setup
-    
-    private func setupServiceDependencies() {
-        // Define service dependencies for proper initialization order
-        // This ensures services are initialized in the correct sequence
-    }
-    
-    func initializeServices() {
-        guard !isInitialized else {
-            print("[⚠️] SystemRegistry already initialized")
-            return
-        }
-        
-        setupDefaultServices()
-        initializeOpenSimIntegration()
-        validateServiceDependencies()
-        
-        isInitialized = true
-        print("[✅] SystemRegistry initialization complete")
-    }
-    
-    private func setupDefaultServices() {
-        // Initialize core services in dependency order
-        
-        // 1. Initialize ECS Core (foundation)
-        if ecs == nil {
-            let ecsCore = ECSCore()
-            register(ecsCore, for: "ecs")
-        }
-        
-        // 2. Initialize UI system
-        if ui == nil {
-            let uiComposer = UIComposer()
-            register(uiComposer, for: "ui")
-        }
-        
-        // 3. Initialize UI Router
-        if router == nil {
-            let uiRouter = UIScriptRouter()
-            register(uiRouter, for: "router")
-        }
-        
-        print("[🔧] Default services initialized")
-    }
-    
-    // MODIFY the initializeOpenSimIntegration method to use the fixed integration:
-
-    private func initializeOpenSimIntegration() {
-        // Only initialize OpenSim services if dependencies are available
-        guard let ecs = ecs, let renderer = renderer else {
-            print("[⚠️] Cannot initialize OpenSim integration: missing ECS or Renderer")
-            return
-        }
-        
-        print("[🌐] Initializing OpenSim integration services...")
-        
-        // 1. Initialize Message Router first
-        if messageRouter == nil {
-            let router = OSMessageRouter()
-            register(router, for: "messageRouter")
-            print("[📨] Message router initialized")
-        }
-        
-        // 2. Initialize OpenSim Connection Manager WITH registry reference
-        if openSimConnection == nil {
-            let connectionManager = OSConnectManager(systemRegistry: self)
-            register(connectionManager, for: "openSimConnection")
-            print("[🔌] OpenSim connection manager initialized")
-        }
-        
-        // 3. Initialize OpenSim ECS Bridge with enhanced configuration
-        if openSimBridge == nil {
-            let config = createOpenSimConfig()
-            let bridge = OpenSimECSBridge(ecs: ecs, renderer: renderer, config: config)
-            register(bridge, for: "openSimBridge")
-            print("[🌉] OpenSim ECS bridge initialized")
-            
-            // Register bridge with connection manager using the fixed method
-            if let connectionManager = openSimConnection {
-                connectionManager.registerECSBridge(bridge)
-                print("[🔗] ECS bridge registered with connection manager")
+    func resolve<T>(_ type: T.Type) -> T? {
+        for (_, service) in metadata {
+            if let typedService = service as? T {
+                return typedService
             }
         }
-        
-        // 4. Ensure all services are properly integrated
-        if let connectionManager = openSimConnection {
-            connectionManager.integrateWithServices()
-            
-            // Validate that all dependencies are satisfied
-            if connectionManager.validateServiceDependencies() {
-                print("[✅] OpenSim service integration validated")
-            } else {
-                print("[⚠️] OpenSim service integration validation failed")
-            }
-        }
-        
-        // 5. Setup inter-service connections
-        setupOpenSimServiceConnections()
-        
-        print("[🌐] OpenSim integration services initialization complete")
+        return nil
     }
     
-    private func createOpenSimConfig() -> EntityCreationConfig {
-        // Create configuration based on device capabilities and settings
-        #if targetEnvironment(simulator)
-        return EntityCreationConfig(
-            enableVisualRepresentation: true,
-            enablePhysics: false, // Disable physics in simulator for performance
-            enableInteraction: true,
-            debugVisualization: true,
-            materialQuality: .low,
-            lodDistance: 50.0,
-            maxEntities: 500
-        )
-        #else
-        return EntityCreationConfig(
-            enableVisualRepresentation: true,
-            enablePhysics: true,
-            enableInteraction: true,
-            debugVisualization: false,
-            materialQuality: .medium,
-            lodDistance: 100.0,
-            maxEntities: 1000
-        )
-        #endif
-    }
-    
-    private func setupOpenSimServiceConnections() {
-        // Connect OpenSim Connection Manager with Message Router
-        if let connectionManager = openSimConnection,
-           let messageRouter = messageRouter {
-            
-            // This would require updates to OSConnectManager to accept message router
-            // For now, we'll document this as a future integration point
-            print("[🔗] OpenSim service connections established")
-        }
-        
-        // Setup notification-based communication between services
-        setupNotificationHandlers()
-    }
-    
-    private func setupNotificationHandlers() {
-        // Setup cross-service communication via notifications
-        NotificationCenter.default.addObserver(
-            forName: .openSimBridgeStats,
-            object: nil,
-            queue: .main
-        ) { notification in
-            if let stats = notification.object as? [String: Any] {
-                print("[📊] OpenSim Bridge Stats: \(stats)")
-            }
-        }
-    }
-    
-    private func validateServiceDependencies() {
-        var missingDependencies: [String] = []
-        
-        // Check core dependencies
-        if ecs == nil { missingDependencies.append("ecs") }
-        if ui == nil { missingDependencies.append("ui") }
-        if router == nil { missingDependencies.append("router") }
-        
-        // Check OpenSim dependencies (only if renderer is available)
-        if renderer != nil {
-            if openSimBridge == nil { missingDependencies.append("openSimBridge") }
-            if openSimConnection == nil { missingDependencies.append("openSimConnection") }
-            if messageRouter == nil { missingDependencies.append("messageRouter") }
-        }
-        
-        if !missingDependencies.isEmpty {
-            print("[⚠️] Missing service dependencies: \(missingDependencies.joined(separator: ", "))")
-        } else {
-            print("[✅] All service dependencies satisfied")
-        }
-    }
-    
-    // MARK: - Service Lifecycle Management
-    
-    func startServices() {
-        // Start services that require active lifecycle management
-        
-        if let messageRouter = messageRouter {
-            messageRouter.resumeProcessing()
-        }
-        
-        if let openSimBridge = openSimBridge {
-            // OpenSim bridge is already listening for notifications
-            print("[▶️] OpenSim bridge active")
-        }
-        
-        print("[▶️] Services started")
-    }
-    
-    func stopServices() {
-        if let messageRouter = messageRouter {
-            messageRouter.pauseProcessing()
-        }
-        
-        if let openSimConnection = openSimConnection {
-            openSimConnection.disconnect()
-        }
-        
-        print("[⏸️] Services stopped")
-    }
-    
-    func restartServices() {
-        stopServices()
-        Thread.sleep(forTimeInterval: 0.1) // Brief pause
-        startServices()
-        print("[🔄] Services restarted")
-    }
-    
-    // MARK: - Service Access Helpers
+    // MARK: - Type-Safe Service Access
     
     func requireECS() -> ECSCore {
         guard let ecs = ecs else {
@@ -331,171 +167,448 @@ final class SystemRegistry {
         return ecs
     }
     
-    func requireRenderer() -> RendererService {
-        guard let renderer = renderer else {
-            fatalError("Renderer service is required but not available")
+    func requireUI() -> UIComposer {
+        guard let ui = ui else {
+            fatalError("UI service is required but not available")
         }
-        return renderer
+        return ui
     }
     
-    func requireOpenSimBridge() -> OpenSimECSBridge {
-        guard let bridge = openSimBridge else {
-            fatalError("OpenSim bridge is required but not available")
+    // MARK: - Service Initialization
+    
+    func initializeCore() {
+        guard !isInitialized else {
+            print("[⚠️] SystemRegistry already initialized")
+            return
         }
-        return bridge
+        
+        // Initialize core services in dependency order
+        initializeECS()
+        initializeUI()
+        
+        isInitialized = true
+        print("[✅] Core services initialized")
     }
+    
+    private func initializeECS() {
+        if ecs == nil {
+            let ecsCore = ECSCore()
+            register(ecsCore, for: "ecs")
+        }
+    }
+    
+    private func initializeUI() {
+        if ui == nil {
+            let uiComposer = UIComposer(systemRegistry: self)
+            register(uiComposer, for: "ui")
+        }
+    }
+    
+    // MARK: - Service Lifecycle Management
+    
+    func startServices() {
+        print("[▶️] Starting registered services...")
+        
+        // Start services in initialization order
+        for serviceKey in initializationOrder {
+            if let service = metadata[serviceKey] {
+                startService(key: serviceKey, service: service)
+            }
+        }
+        
+        print("[✅] All services started")
+    }
+    
+    func stopServices() {
+        print("[⏹️] Stopping registered services...")
+        
+        // Stop services in reverse order
+        for serviceKey in initializationOrder.reversed() {
+            if let service = metadata[serviceKey] {
+                stopService(key: serviceKey, service: service)
+            }
+        }
+        
+        print("[✅] All services stopped")
+    }
+    
+    private func startService(key: String, service: Any) {
+        // Check if service has a start method and call it
+        if let startableService = service as? any ServiceLifecycle {
+            startableService.start()
+            print("[▶️] Started service: \(key)")
+        }
+    }
+    
+    private func stopService(key: String, service: Any) {
+        // Check if service has a stop method and call it
+        if let stoppableService = service as? any ServiceLifecycle {
+            stoppableService.stop()
+            print("[⏹️] Stopped service: \(key)")
+        }
+    }
+    
+    // MARK: - Optional Service Management
+    
+    func enableOpenSimSupport() {
+        print("[🌐] Enabling OpenSim support...")
+        
+        // Initialize OpenSim services if dependencies are available
+        guard let ecs = ecs else {
+            print("[❌] Cannot enable OpenSim: ECS not available")
+            return
+        }
+        
+        // Initialize message router
+        if messageRouter == nil {
+            let router = OSMessageRouter()
+            register(router, for: "messageRouter")
+        }
+        
+        // Initialize connection manager
+        if openSimConnection == nil {
+            let connection = OSConnectManager(systemRegistry: self)
+            register(connection, for: "openSimConnection")
+        }
+        
+        // Initialize ECS bridge
+        if openSimBridge == nil {
+            let bridge = OpenSimECSBridge(ecs: ecs)
+            register(bridge, for: "openSimBridge")
+        }
+        
+        print("[✅] OpenSim support enabled")
+    }
+    
+    func enableRenderer(_ rendererService: RendererService) {
+        register(rendererService, for: "renderer")
+        print("[🎨] Renderer service registered")
+    }
+    
+    // MARK: - Service Status and Health
     
     func hasOpenSimSupport() -> Bool {
         return openSimBridge != nil && openSimConnection != nil && messageRouter != nil
     }
     
-    // MARK: - Debug and Inspection
-    
-    func dumpServiceStatus() {
-        print("=== SystemRegistry Service Status ===")
-        print("Initialized: \(isInitialized)")
-        print("Services Registered: \(initializationOrder.count)")
-        print("")
-        
-        print("Core Services:")
-        print("  ECS: \(ecs != nil ? "✅" : "❌")")
-        print("  UI Composer: \(ui != nil ? "✅" : "❌")")
-        print("  UI Router: \(router != nil ? "✅" : "❌")")
-        print("  Renderer: \(renderer != nil ? "✅" : "❌")")
-        print("")
-        
-        print("OpenSim Services:")
-        print("  OpenSim Bridge: \(openSimBridge != nil ? "✅" : "❌")")
-        print("  OpenSim Connection: \(openSimConnection != nil ? "✅" : "❌")")
-        print("  Message Router: \(messageRouter != nil ? "✅" : "❌")")
-        print("  OpenSim Support: \(hasOpenSimSupport() ? "✅" : "❌")")
-        print("")
-        
-        print("Metadata Services: \(metadata.count)")
-        for (key, value) in metadata {
-            print("  \(key): \(type(of: value))")
-        }
-        print("=====================================")
-    }
-    
-    func getServiceInfo<T>(_ serviceType: T.Type) -> String? {
-        for (key, service) in metadata {
-            if service is T {
-                return "Service '\(key)' of type \(type(of: service))"
-            }
-        }
-        return nil
-    }
-    
-    func getRegistrationOrder() -> [String] {
-        return initializationOrder
-    }
-    
-    // MARK: - Configuration Management
-    
-    func updateOpenSimConfig(_ config: EntityCreationConfig) {
-        // Update configuration would require recreating the bridge
-        // For now, log the request
-        print("[🔧] OpenSim config update requested - restart services to apply")
-    }
-    
-    func enableDebugMode(_ enabled: Bool) {
-        messageRouter?.setDebugMode(enabled)
-        openSimBridge?.enableDebugVisualization(enabled)
-        print("[🐛] Debug mode: \(enabled ? "enabled" : "disabled")")
-    }
-    
-    // MARK: - Cleanup
-    
-    deinit {
-        stopServices()
-        NotificationCenter.default.removeObserver(self)
-        print("[🗑️] SystemRegistry deinitialized")
-    }
-}
-
-// MARK: - Service Registration Extensions
-
-extension SystemRegistry {
-    
-    /// Convenience method to register renderer and initialize OpenSim services
-    func registerRenderer(_ renderer: RendererService) {
-        register(renderer, for: "renderer")
-        
-        // If we have all dependencies, initialize OpenSim integration
-        if ecs != nil && !isInitialized {
-            initializeOpenSimIntegration()
-        }
-    }
-    
-    /// Convenience method to register ECS and setup basic systems
-    func registerECS(_ ecs: ECSCore) {
-        register(ecs, for: "ecs")
-        
-        // Setup basic ECS systems if needed
-        // (Future: could add default systems here)
-    }
-    
-    /// Convenience method for complete service setup
-    func setupCompleteSystem(ecs: ECSCore, renderer: RendererService, ui: UIComposer, router: UIScriptRouter) {
-        register(ecs, for: "ecs")
-        register(renderer, for: "renderer")
-        register(ui, for: "ui")
-        register(router, for: "router")
-        
-        initializeServices()
-        startServices()
-        
-        print("[🚀] Complete system setup finished")
-    }
-}
-
-// MARK: - Service Health Monitoring
-
-extension SystemRegistry {
-    
-    struct ServiceHealth {
-        let isHealthy: Bool
-        let lastCheck: Date
-        let issues: [String]
+    func isServiceAvailable(_ key: String) -> Bool {
+        return metadata[key] != nil
     }
     
     func checkServiceHealth() -> [String: ServiceHealth] {
         var healthStatus: [String: ServiceHealth] = [:]
         
-        // Check ECS health
-        if let ecs = ecs {
-            let entityCount = ecs.getEntityCount()
-            let isHealthy = entityCount >= 0 // Basic sanity check
-            healthStatus["ecs"] = ServiceHealth(
-                isHealthy: isHealthy,
-                lastCheck: Date(),
-                issues: isHealthy ? [] : ["Invalid entity count"]
-            )
+        // Check core services
+        healthStatus["ecs"] = checkECSHealth()
+        healthStatus["ui"] = checkUIHealth()
+        
+        // Check optional services
+        if renderer != nil {
+            healthStatus["renderer"] = checkRendererHealth()
         }
         
-        // Check OpenSim bridge health
-        if let bridge = openSimBridge {
-            let stats = bridge.getEntityStats()
-            let isHealthy = stats.activeEntities >= 0
-            healthStatus["openSimBridge"] = ServiceHealth(
-                isHealthy: isHealthy,
-                lastCheck: Date(),
-                issues: isHealthy ? [] : ["Invalid entity statistics"]
-            )
-        }
-        
-        // Check message router health
-        if let router = messageRouter {
-            let avgTime = router.getAverageProcessingTime()
-            let isHealthy = avgTime < 0.1 // Less than 100ms average
-            healthStatus["messageRouter"] = ServiceHealth(
-                isHealthy: isHealthy,
-                lastCheck: Date(),
-                issues: isHealthy ? [] : ["High message processing time: \(avgTime)s"]
-            )
+        if hasOpenSimSupport() {
+            healthStatus["openSimBridge"] = checkOpenSimBridgeHealth()
+            healthStatus["openSimConnection"] = checkOpenSimConnectionHealth()
+            healthStatus["messageRouter"] = checkMessageRouterHealth()
         }
         
         return healthStatus
+    }
+    
+    private func checkECSHealth() -> ServiceHealth {
+        guard let ecs = ecs else {
+            return ServiceHealth(isHealthy: false, issues: ["ECS service not available"])
+        }
+        
+        let entityCount = ecs.getEntityCount()
+        var issues: [String] = []
+        
+        if entityCount > 10000 {
+            issues.append("High entity count (\(entityCount))")
+        }
+        
+        return ServiceHealth(isHealthy: issues.isEmpty, issues: issues)
+    }
+    
+    private func checkUIHealth() -> ServiceHealth {
+        guard let ui = ui else {
+            return ServiceHealth(isHealthy: false, issues: ["UI service not available"])
+        }
+        
+        // Basic UI health checks
+        let activeSchemas = ui.getActiveSchemaNames()
+        var issues: [String] = []
+        
+        if activeSchemas.isEmpty {
+            issues.append("No active UI schemas")
+        }
+        
+        return ServiceHealth(isHealthy: issues.isEmpty, issues: issues)
+    }
+    
+    private func checkRendererHealth() -> ServiceHealth {
+        guard let renderer = renderer else {
+            return ServiceHealth(isHealthy: false, issues: ["Renderer service not available"])
+        }
+        
+        // Basic renderer health checks would go here
+        return ServiceHealth(isHealthy: true)
+    }
+    
+    private func checkOpenSimBridgeHealth() -> ServiceHealth {
+        guard let bridge = openSimBridge else {
+            return ServiceHealth(isHealthy: false, issues: ["OpenSim bridge not available"])
+        }
+        
+        let stats = bridge.getEntityStats()
+        var issues: [String] = []
+        
+        if stats.activeEntities > 1000 {
+            issues.append("High OpenSim entity count (\(stats.activeEntities))")
+        }
+        
+        return ServiceHealth(isHealthy: issues.isEmpty, issues: issues)
+    }
+    
+    private func checkOpenSimConnectionHealth() -> ServiceHealth {
+        guard let connection = openSimConnection else {
+            return ServiceHealth(isHealthy: false, issues: ["OpenSim connection not available"])
+        }
+        
+        var issues: [String] = []
+        
+        if !connection.isConnected {
+            issues.append("OpenSim not connected")
+        }
+        
+        if connection.latency > 200 {
+            issues.append("High latency (\(connection.latency)ms)")
+        }
+        
+        return ServiceHealth(isHealthy: issues.isEmpty, issues: issues)
+    }
+    
+    private func checkMessageRouterHealth() -> ServiceHealth {
+        guard let router = messageRouter else {
+            return ServiceHealth(isHealthy: false, issues: ["Message router not available"])
+        }
+        
+        let avgTime = router.getAverageProcessingTime()
+        var issues: [String] = []
+        
+        if avgTime > 0.1 {
+            issues.append("Slow message processing (\(avgTime * 1000)ms)")
+        }
+        
+        return ServiceHealth(isHealthy: issues.isEmpty, issues: issues)
+    }
+    
+    // MARK: - Service Initialization and Dependencies
+    
+    func initializeServices() {
+        print("[🔧] Initializing all registered services...")
+        
+        // Initialize services that have initialization methods
+        for (key, service) in metadata {
+            if let initializableService = service as? any ServiceInitializable {
+                initializableService.initialize()
+                print("[✅] Initialized service: \(key)")
+            }
+        }
+        
+        print("[✅] Service initialization complete")
+    }
+    
+    // MARK: - Debug and Development
+    
+    func enableDebugMode(_ enabled: Bool) {
+        isDebugMode = enabled
+        
+        // Enable debug mode on services that support it
+        if let bridge = openSimBridge {
+            bridge.enableDebugVisualization(enabled)
+        }
+        
+        if let router = messageRouter {
+            router.setDebugMode(enabled)
+        }
+        
+        print("[🐛] Debug mode: \(enabled ? "Enabled" : "Disabled")")
+    }
+    
+    func dumpServiceStatus() {
+        print("=== SystemRegistry Service Status ===")
+        print("Initialized: \(isInitialized)")
+        print("Debug Mode: \(isDebugMode)")
+        print("Total Services: \(metadata.count)")
+        print("")
+        
+        print("Core Services:")
+        print("  ECS: \(ecs != nil ? "✅" : "❌")")
+        print("  UI: \(ui != nil ? "✅" : "❌")")
+        print("")
+        
+        print("Optional Services:")
+        print("  Renderer: \(renderer != nil ? "✅" : "❌")")
+        print("  OpenSim Bridge: \(openSimBridge != nil ? "✅" : "❌")")
+        print("  OpenSim Connection: \(openSimConnection != nil ? "✅" : "❌")")
+        print("  Message Router: \(messageRouter != nil ? "✅" : "❌")")
+        print("")
+        
+        print("All Registered Services:")
+        for (key, service) in metadata {
+            print("  \(key): \(type(of: service))")
+        }
+        
+        print("")
+        print("Service Health:")
+        let healthStatus = checkServiceHealth()
+        for (service, health) in healthStatus {
+            let status = health.isHealthy ? "✅" : "❌"
+            print("  \(status) \(service)")
+            if !health.issues.isEmpty {
+                for issue in health.issues {
+                    print("    - \(issue)")
+                }
+            }
+        }
+        
+        print("=====================================")
+    }
+    
+    func reset() {
+        metadata.removeAll()
+        serviceMetadata.removeAll()
+        initializationOrder.removeAll()
+        
+        ecs = nil
+        ui = nil
+        renderer = nil
+        openSimBridge = nil
+        openSimConnection = nil
+        messageRouter = nil
+        
+        isInitialized = false
+        isDebugMode = false
+        print("[🔄] SystemRegistry reset")
+    }
+    
+    // MARK: - Service Dependencies
+    
+    func getDependencies(for serviceKey: String) -> [String] {
+        return serviceMetadata[serviceKey]?.dependencies ?? []
+    }
+    
+    func validateDependencies() -> [String: [String]] {
+        var missingDependencies: [String: [String]] = [:]
+        
+        for (serviceKey, metadata) in serviceMetadata {
+            let missing = metadata.dependencies.filter { !isServiceAvailable($0) }
+            if !missing.isEmpty {
+                missingDependencies[serviceKey] = missing
+            }
+        }
+        
+        return missingDependencies
+    }
+    
+    // MARK: - Service Access Convenience Methods
+    
+    func getECS() -> ECSCore? {
+        return ecs
+    }
+    
+    func getUI() -> UIComposer? {
+        return ui
+    }
+    
+    func getRenderer() -> RendererService? {
+        return renderer
+    }
+    
+    func getOpenSimBridge() -> OpenSimECSBridge? {
+        return openSimBridge
+    }
+    
+    func getOpenSimConnection() -> OSConnectManager? {
+        return openSimConnection
+    }
+    
+    func getMessageRouter() -> OSMessageRouter? {
+        return messageRouter
+    }
+}
+
+// MARK: - Service Lifecycle Protocols
+
+/// Protocol for services that need explicit start/stop lifecycle management
+protocol ServiceLifecycle {
+    func start()
+    func stop()
+}
+
+/// Protocol for services that need initialization after registration
+protocol ServiceInitializable {
+    func initialize()
+}
+
+// MARK: - Extensions
+
+extension SystemRegistry {
+    
+    /// Get service by type (convenience method)
+    func get<T>(_ type: T.Type) -> T? {
+        return resolve(type)
+    }
+    
+    /// Check if a service type is registered
+    func has<T>(_ type: T.Type) -> Bool {
+        return resolve(type) != nil
+    }
+    
+    /// Get all services of a specific type
+    func getAll<T>(_ type: T.Type) -> [T] {
+        return metadata.values.compactMap { $0 as? T }
+    }
+    
+    /// Get service count
+    var serviceCount: Int {
+        return metadata.count
+    }
+    
+    /// Get all service keys
+    var serviceKeys: [String] {
+        return Array(metadata.keys)
+    }
+}
+
+// MARK: - SystemRegistry Factory
+
+extension SystemRegistry {
+    
+    /// Create a pre-configured SystemRegistry for testing
+    static func createTestRegistry() -> SystemRegistry {
+        let registry = SystemRegistry()
+        
+        // Initialize with mock services for testing
+        let mockECS = ECSCore()
+        registry.registerECS(mockECS)
+        
+        let mockUI = UIComposer(systemRegistry: registry)
+        registry.register(mockUI, for: "ui")
+        
+        registry.initializeCore()
+        
+        print("[🧪] Test SystemRegistry created")
+        return registry
+    }
+    
+    /// Create a minimal SystemRegistry with only core services
+    static func createMinimalRegistry() -> SystemRegistry {
+        let registry = SystemRegistry()
+        registry.initializeCore()
+        print("[⚡] Minimal SystemRegistry created")
+        return registry
     }
 }

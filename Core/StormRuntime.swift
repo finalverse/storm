@@ -4,9 +4,10 @@
 //
 //  Enhanced orchestrator for Finalverse Storm app lifecycle with OpenSim integration
 //  Coordinates kernel ticking, plugin loading, system setup, service injection, and OpenSim connectivity
-//  ENHANCED: Proper service initialization order, OpenSim integration, and renderer injection support
+//  UPDATED: Removed UIScriptRouter dependency, routing now handled directly by UIComposer
 //
 //  Created by Wenyan Qin on 2025-07-10.
+//  Updated by Wenyan Qin on 2025-07-15.
 //
 
 import Foundation
@@ -102,34 +103,39 @@ final class StormRuntime {
         let ecs = ECSCore()
         registry.registerECS(ecs)
         
-        // 2. Initialize UI services
+        // 2. Initialize UI services - UIComposer now handles routing internally
         registry.register(composer, for: "ui")
         
-        let router = UIScriptRouter()
-        registry.register(router, for: "router")
-        
-        // 3. Setup UI routing handlers
-        setupUIRouting(router)
+        // 3. Setup UI command handlers directly with UIComposer
+        setupUICommandHandlers(composer)
         
         isSystemsSetup = true
         print("[✅] Core services setup complete")
     }
     
-    private func setupUIRouting(_ router: UIScriptRouter) {
+    /// Setup UI command handlers directly with UIComposer (replaces UIScriptRouter)
+    private func setupUICommandHandlers(_ uiComposer: UIComposer) {
         // Register OpenSim command handlers
-        router.registerHandler(namespace: "opensim") { [weak self] command, args in
+        uiComposer.registerActionHandler(namespace: "opensim") { [weak self] command, args in
             self?.handleOpenSimCommand(command, args: args)
         }
         
         // Register system command handlers
-        router.registerHandler(namespace: "system") { [weak self] command, args in
+        uiComposer.registerActionHandler(namespace: "system") { [weak self] command, args in
             self?.handleSystemCommand(command, args: args)
         }
         
         // Register debug command handlers
-        router.registerHandler(namespace: "debug") { [weak self] command, args in
+        uiComposer.registerActionHandler(namespace: "debug") { [weak self] command, args in
             self?.handleDebugCommand(command, args: args)
         }
+        
+        // Register avatar/movement command handlers
+        uiComposer.registerActionHandler(namespace: "avatar") { [weak self] command, args in
+            self?.handleAvatarCommand(command, args: args)
+        }
+        
+        print("[🎯] UI command handlers registered with UIComposer")
     }
     
     // MARK: - Renderer Integration
@@ -298,6 +304,53 @@ final class StormRuntime {
             
         default:
             print("[⚠️] Unknown debug command: \(command)")
+        }
+    }
+    
+    /// Handle avatar/movement commands for OpenSim integration
+    private func handleAvatarCommand(_ command: String, args: [String]) {
+        guard let connection: OSConnectManager = registry.resolve("openSimConnection") else {
+            print("[❌] OpenSim connection not available for avatar commands")
+            return
+        }
+        
+        switch command {
+        case "walk":
+            if args.count >= 2,
+               let forward = Float(args[0]),
+               let strafe = Float(args[1]) {
+                connection.setAvatarMovement(forward: forward, strafe: strafe)
+            }
+            
+        case "look":
+            if args.count >= 2,
+               let yaw = Float(args[0]),
+               let pitch = Float(args[1]) {
+                connection.setAvatarRotation(yaw: yaw, pitch: pitch)
+            }
+            
+        case "jump":
+            connection.jumpAvatar()
+            
+        case "sit":
+            if let targetID = args.first {
+                connection.sitAvatar(on: targetID)
+            }
+            
+        case "stand":
+            connection.standAvatar()
+            
+        case "fly":
+            let enable = args.first?.lowercased() != "false"
+            connection.setAvatarFlying(enable)
+            
+        case "gesture":
+            if let gestureType = args.first {
+                connection.performGesture(gestureType)
+            }
+            
+        default:
+            print("[⚠️] Unknown avatar command: \(command)")
         }
     }
     
@@ -487,8 +540,13 @@ extension StormRuntime {
         return registry.resolve("openSimBridge")
     }
     
-    /// Execute UI command directly
+    /// Execute UI command directly (routes through UIComposer)
     func executeCommand(_ action: String) {
-        registry.router?.route(action: action)
+        composer.routeAction(action)
+    }
+    
+    /// Get UI composer for direct interaction
+    func getComposer() -> UIComposer {
+        return composer
     }
 }

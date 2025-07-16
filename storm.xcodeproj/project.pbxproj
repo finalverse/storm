@@ -15,7 +15,6 @@
 		B437BE972E1E8C1F0045436F /* libstorm-macos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B437BE942E1E8C1F0045436F /* libstorm-macos.a */; platformFilters = (macos, ); };
 		B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9A2E1EA7550045436F /* UIComposer.swift */; };
 		B437BE9D2E1EAAB20045436F /* UISchemaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BE9C2E1EAAB20045436F /* UISchemaView.swift */; };
-		B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA02E1EC2350045436F /* UIScriptRouter.swift */; };
 		B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = B437BEA92E1F89810045436F /* StormRuntime.swift */; };
 		B4838B712E204566007276FD /* RendererService-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B702E204566007276FD /* RendererService-iOS.swift */; };
 		B4838B7F2E2174AF007276FD /* LocalWorldPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838B7E2E2174AF007276FD /* LocalWorldPlugin.swift */; };
@@ -43,9 +42,9 @@
 		B4838C592E254DFB007276FD /* OpenSimStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C582E254DFB007276FD /* OpenSimStateManager.swift */; };
 		B4838C5B2E255080007276FD /* OpenSimChatSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C5A2E255080007276FD /* OpenSimChatSystem.swift */; };
 		B4838C5E2E2551BC007276FD /* OpenSimAvatarMovementSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C5D2E2551BC007276FD /* OpenSimAvatarMovementSystem.swift */; };
-		B4838C612E2554F8007276FD /* OpenSimTestFramework.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C602E2554F8007276FD /* OpenSimTestFramework.swift */; };
-		B4838C632E25651A007276FD /* OpenSimTestSuites.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C622E25651A007276FD /* OpenSimTestSuites.swift */; };
 		B4838C652E256549007276FD /* OpenSimAdvancedTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C642E256549007276FD /* OpenSimAdvancedTesting.swift */; };
+		B4838C842E26244F007276FD /* UISchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C832E26244F007276FD /* UISchema.swift */; };
+		B4838C862E266AE0007276FD /* RendererServiceFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4838C852E266AE0007276FD /* RendererServiceFactory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,7 +60,6 @@
 		B437BE962E1E8C1F0045436F /* libstorm-ios-sim.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libstorm-ios-sim.a"; path = "libs/libstorm-ios-sim.a"; sourceTree = "<group>"; };
 		B437BE9A2E1EA7550045436F /* UIComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIComposer.swift; sourceTree = "<group>"; };
 		B437BE9C2E1EAAB20045436F /* UISchemaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UISchemaView.swift; sourceTree = "<group>"; };
-		B437BEA02E1EC2350045436F /* UIScriptRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScriptRouter.swift; sourceTree = "<group>"; };
 		B437BEA62E1ED3030045436F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B437BEA82E1ED36D0045436F /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
 		B437BEA92E1F89810045436F /* StormRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StormRuntime.swift; sourceTree = "<group>"; };
@@ -97,6 +95,8 @@
 		B4838C6C2E2575EB007276FD /* SYSTEM_ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = SYSTEM_ARCHITECTURE.md; sourceTree = "<group>"; };
 		B4838C6D2E257606007276FD /* LOW_LEVEL_DESIGN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LOW_LEVEL_DESIGN.md; sourceTree = "<group>"; };
 		B4838C6E2E2576E1007276FD /* IMPLEMENTATION_ROADMAP.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = IMPLEMENTATION_ROADMAP.md; sourceTree = "<group>"; };
+		B4838C832E26244F007276FD /* UISchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UISchema.swift; sourceTree = "<group>"; };
+		B4838C852E266AE0007276FD /* RendererServiceFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererServiceFactory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -151,7 +151,6 @@
 				B437BE852E1E59C40045436F /* Kernel.swift */,
 				B437BE872E1E5DFA0045436F /* PluginHost.swift */,
 				B437BE8B2E1E5F480045436F /* SystemRegistry.swift */,
-				B437BEA02E1EC2350045436F /* UIScriptRouter.swift */,
 				B437BEA92E1F89810045436F /* StormRuntime.swift */,
 				B4838B852E2217FB007276FD /* InputController.swift */,
 			);
@@ -169,6 +168,7 @@
 				B4838C422E23F937007276FD /* CockpitView-iOS.swift */,
 				B437BE9C2E1EAAB20045436F /* UISchemaView.swift */,
 				B4838C4C2E253D9B007276FD /* OpenSimLoginView.swift */,
+				B4838C832E26244F007276FD /* UISchema.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -195,6 +195,7 @@
 				B4838B8A2E226426007276FD /* RendererService-macOS.swift */,
 				B4838C4E2E253E23007276FD /* LocalSceneManager.swift */,
 				B4838C522E2545D0007276FD /* ECSRealityKitBridge.swift */,
+				B4838C852E266AE0007276FD /* RendererServiceFactory.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -330,12 +331,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4838B8B2E226426007276FD /* RendererService-macOS.swift in Sources */,
-				B4838C632E25651A007276FD /* OpenSimTestSuites.swift in Sources */,
 				B4838B812E2176E7007276FD /* ECSComponents.swift in Sources */,
 				B437BE882E1E5DFA0045436F /* PluginHost.swift in Sources */,
 				B437BE8C2E1E5F480045436F /* SystemRegistry.swift in Sources */,
 				B4838C432E23F937007276FD /* CockpitView-iOS.swift in Sources */,
 				B4838C252E237115007276FD /* VirtualControls.swift in Sources */,
+				B4838C842E26244F007276FD /* UISchema.swift in Sources */,
 				B4838B712E204566007276FD /* RendererService-iOS.swift in Sources */,
 				B4838C292E237796007276FD /* OpenSimECSBridge.swift in Sources */,
 				B437BE8A2E1E5E500045436F /* HelloPlugin.swift in Sources */,
@@ -343,6 +344,7 @@
 				B4838C4F2E253E23007276FD /* LocalSceneManager.swift in Sources */,
 				B437BE9B2E1EA7550045436F /* UIComposer.swift in Sources */,
 				B437BE8E2E1E61D20045436F /* ECSCore.swift in Sources */,
+				B4838C862E266AE0007276FD /* RendererServiceFactory.swift in Sources */,
 				B4838C272E2371AA007276FD /* OpenSimProtocol.swift in Sources */,
 				B4838C532E2545D0007276FD /* ECSRealityKitBridge.swift in Sources */,
 				B437BEAA2E1F89810045436F /* StormRuntime.swift in Sources */,
@@ -362,9 +364,7 @@
 				B4838C5B2E255080007276FD /* OpenSimChatSystem.swift in Sources */,
 				B4838C5E2E2551BC007276FD /* OpenSimAvatarMovementSystem.swift in Sources */,
 				B4838C4D2E253D9B007276FD /* OpenSimLoginView.swift in Sources */,
-				B437BEA12E1EC2350045436F /* UIScriptRouter.swift in Sources */,
 				B4838B892E2262E4007276FD /* RendererService.swift in Sources */,
-				B4838C612E2554F8007276FD /* OpenSimTestFramework.swift in Sources */,
 				B4838C592E254DFB007276FD /* OpenSimStateManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
