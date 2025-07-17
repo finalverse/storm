@@ -10,6 +10,7 @@
 //
 
 mod esc;
+mod protocols;
 
 use std::sync::{Arc, Mutex, RwLock, atomic::{AtomicU64, Ordering}};
 use std::collections::{HashMap, VecDeque};
@@ -1258,9 +1259,9 @@ pub mod state {
     pub use super::{UniversalStateManager, StateChangeData, OptimizedUpdate};
 }
 
-pub mod protocols {
-    pub use super::{ProtocolBridge, ProtocolAnalysis};
-}
+// pub mod protocols {
+//     pub use super::{ProtocolBridge, ProtocolAnalysis};
+// }
 
 pub mod ffi {
     pub use super::{
